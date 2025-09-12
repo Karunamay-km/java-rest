@@ -13,7 +13,7 @@ public class HttpHeaderFactory implements HttpHeader {
 
     HttpHeaderFactory() {
         headers.put("Connection", "keep-alive");
-        headers.put("Content-Type", "text/html");
+        headers.put("Content-Type", "application/json");
         headers.put("Server", "ubuntu 24");
     }
 

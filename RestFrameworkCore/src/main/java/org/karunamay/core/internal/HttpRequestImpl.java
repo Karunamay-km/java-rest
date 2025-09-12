@@ -11,39 +11,52 @@ class HttpRequestImpl implements HttpRequest {
     private final String path;
     private final HttpHeader headers;
     private final HttpQueryParam queryParams;
-    private final byte[] body;
+    private final String httpVersion;
+    private final String body;
 
     HttpRequestImpl(
             HttpMethod method,
             String path,
             HttpHeader headers,
             HttpQueryParam queryParams,
-            byte[] body
+            String httpVersion,
+            String body
     ) {
         this.method = method;
         this.path = path;
         this.headers = headers;
         this.queryParams = queryParams;
+        this.httpVersion = httpVersion;
         this.body = body;
     }
 
+    @Override
     public HttpMethod getMethod() {
         return method;
     }
 
+    @Override
     public String getPath() {
         return path;
     }
 
+    @Override
     public HttpHeader getHeaders() {
         return headers;
     }
 
+    @Override
     public HttpQueryParam getQueryParams() {
         return queryParams;
     }
 
-    public byte[] getBody() {
+    @Override
+    public String getHttpVersion() {
+        return httpVersion;
+    }
+
+    @Override
+    public String getBody() {
         return body;
     }
 }

@@ -22,6 +22,7 @@ class HttpRequestParser {
     private static String path;
     private static HttpHeader headers;
     private static HttpQueryParam queryParams;
+    private static String httpVersion;
 
     public static HttpRequest parse(InputStream inputStream) throws Exception {
         BufferedReader bf = getBufferedReader(inputStream);
@@ -30,12 +31,14 @@ class HttpRequestParser {
         path = requestLine.getUri().getPath();
         headers = headerParser(bf);
         queryParams = queryParamParser(requestLine.getUri());
+        httpVersion = requestLine.getHttpVersion();
 
         return new HttpRequestBuilder()
                 .withMethod(method)
                 .withPath(path)
                 .withHeaders(headers)
                 .withQueryParams(queryParams)
+                .withHttpVersion(httpVersion)
                 .build();
     }
 
@@ -55,6 +58,10 @@ class HttpRequestParser {
         return queryParams;
     }
 
+    public String getHttpVersion() {
+        return httpVersion;
+    }
+
     private static BufferedReader getBufferedReader(InputStream inputStream) {
         return new BufferedReader(new InputStreamReader(inputStream));
     }
@@ -69,7 +76,7 @@ class HttpRequestParser {
         private final String httpVersion;
         private final URI uri;
 
-        public RequestLine(String line) throws URISyntaxException {
+        RequestLine(String line) throws URISyntaxException {
             String[] requestLine = line.split(" ");
             this.method = requestLine[0];
             this.uri = new URI(requestLine[1]);
@@ -81,11 +88,11 @@ class HttpRequestParser {
         }
 
         public String getHttpVersion() {
-            return httpVersion;
+            return this.httpVersion;
         }
 
         public URI getUri() {
-            return uri;
+            return this.uri;
         }
     }
 

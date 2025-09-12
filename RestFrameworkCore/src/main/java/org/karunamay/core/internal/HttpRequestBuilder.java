@@ -11,7 +11,8 @@ class HttpRequestBuilder {
     private String path;
     private HttpHeader headers;
     private HttpQueryParam queryParams;
-    private byte[] body;
+    private String body;
+    private String httpVersion;
 
     public HttpRequestBuilder withMethod(HttpMethod httpMethod) {
         this.method = httpMethod;
@@ -33,12 +34,17 @@ class HttpRequestBuilder {
         return this;
     }
 
-    public HttpRequestBuilder withBody(byte[] body) {
+    public HttpRequestBuilder withBody(String body) {
         this.body = body;
         return this;
     }
 
+    public HttpRequestBuilder withHttpVersion(String httpVersion) {
+        this.httpVersion = httpVersion;
+        return this;
+    }
+
     public HttpRequest build() {
-        return new HttpRequestImpl(method, path, headers, queryParams, body);
+        return new HttpRequestImpl(method, path, headers, queryParams, httpVersion, body);
     }
 }

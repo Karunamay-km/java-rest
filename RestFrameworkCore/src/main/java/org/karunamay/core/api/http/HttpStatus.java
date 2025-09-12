@@ -1,4 +1,4 @@
-package org.karunamay.core.http;
+package org.karunamay.core.api.http;
 
 public enum HttpStatus {
     HTTP_OK(200, "OK"),

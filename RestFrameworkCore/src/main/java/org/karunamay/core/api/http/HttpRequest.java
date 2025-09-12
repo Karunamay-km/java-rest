@@ -5,4 +5,7 @@ public interface HttpRequest {
     String getPath();
     HttpHeader getHeaders();
     HttpQueryParam getQueryParams();
+    String getHttpVersion();
+
+    String getBody();
 }

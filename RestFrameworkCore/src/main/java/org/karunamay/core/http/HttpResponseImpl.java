@@ -2,6 +2,7 @@ package org.karunamay.core.http;
 
 import org.karunamay.core.api.http.HttpHeader;
 import org.karunamay.core.api.http.HttpResponse;
+import org.karunamay.core.api.http.HttpStatus;
 
 class HttpResponseImpl implements HttpResponse {
 
@@ -26,23 +27,23 @@ class HttpResponseImpl implements HttpResponse {
     }
 
     public String getHttpVersion() {
-        return httpVersion;
+        return this.httpVersion;
     }
 
     public HttpStatus getStatus() {
-        return status;
+        return this.status;
     }
 
     public String getResponsePhrase() {
-        return responsePhrase;
+        return this.responsePhrase;
     }
 
     public HttpHeader getHeaders() {
-        return headers;
+        return this.headers;
     }
 
     public String getBody() {
-        return body;
+        return this.body;
     }
 
     @Override
@@ -64,6 +65,7 @@ class HttpResponseImpl implements HttpResponse {
         });
 
         response.append("\r\n\r\n");
+        response.append(this.body);
         return response.toString();
     }
 }

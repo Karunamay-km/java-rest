@@ -1,6 +1,7 @@
 package org.karunamay.core.http;
 
 import org.karunamay.core.api.http.HttpHeader;
+import org.karunamay.core.api.http.HttpStatus;
 
 class HttpResponseBuilder {
 
