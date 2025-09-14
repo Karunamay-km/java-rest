@@ -10,12 +10,11 @@ module org.karunamay.core {
     exports org.karunamay.core.api.controller;
     exports org.karunamay.core.api.router;
     exports org.karunamay.core.api.annotation;
-    exports org.karunamay.core.api.authentication.model;
     exports org.karunamay.core.api.config;
     exports org.karunamay.core.api;
+    exports org.karunamay.core.authentication.model;
 
     uses org.karunamay.core.api.router.RouterConfig;
 
-    opens org.karunamay.core.api.authentication.model to org.hibernate.orm.core;
     opens org.karunamay.core.authentication.model to org.hibernate.orm.core;
 }

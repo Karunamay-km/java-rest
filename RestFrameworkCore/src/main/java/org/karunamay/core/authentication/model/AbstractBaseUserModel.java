@@ -10,12 +10,13 @@ public abstract class AbstractBaseUserModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long ID;
 
     @Column(length = 40, unique = true, nullable = false)
     private String username;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String password;
 
     @Column(unique = true, nullable = false)

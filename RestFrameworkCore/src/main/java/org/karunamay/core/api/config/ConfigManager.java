@@ -1,6 +1,7 @@
 package org.karunamay.core.api.config;
 
-import org.karunamay.core.api.authentication.model.UserModel;
+import org.karunamay.core.api.authentication.UserDTO;
+import org.karunamay.core.authentication.model.UserModel;
 
 import java.util.List;
 
@@ -8,7 +9,7 @@ public class ConfigManager {
 
     private static final ConfigManager instance = new ConfigManager();
     private String databasePath;
-    private List<UserModel> authenticatedUsers;
+    private List<UserDTO> authenticatedUsers;
     private String cwd = System.getProperty("user.dir");
 
     public String getCwd() {
@@ -27,11 +28,11 @@ public class ConfigManager {
         this.databasePath = url;
     }
 
-    private void setAuthenticatedUsers(List<UserModel> authenticatedUsers) {
+    private void setAuthenticatedUsers(List<UserDTO> authenticatedUsers) {
         this.authenticatedUsers = authenticatedUsers;
     }
 
-    public List<UserModel> getAuthenticatedUsers() {
+    public List<UserDTO> getAuthenticatedUsers() {
         return authenticatedUsers;
     }
 
@@ -56,7 +57,7 @@ public class ConfigManager {
             return this;
         }
 
-        public Builder withAuthenticatedUser(List<UserModel> users) {
+        public Builder withAuthenticatedUser(List<UserDTO> users) {
             this.cfg.setAuthenticatedUsers(users);
             return this;
         }

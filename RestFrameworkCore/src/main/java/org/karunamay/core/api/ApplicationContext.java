@@ -1,6 +1,8 @@
 package org.karunamay.core.api;
 
-import org.karunamay.core.api.authentication.model.UserModel;
+import org.karunamay.core.api.authentication.UserDTO;
+import org.karunamay.core.api.authentication.UserResponseDTO;
+import org.karunamay.core.authentication.model.UserModel;
 import org.karunamay.core.api.config.ConfigManager;
 import org.karunamay.core.authentication.UserService;
 import org.karunamay.core.db.DatabaseManager;
@@ -12,6 +14,9 @@ import org.slf4j.LoggerFactory;
 
 public class ApplicationContext {
 
+    private final int PORT = 8080;
+    private final int THREADS = 10;
+
     private ConfigManager cfg;
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
     private final UserService userService = new UserService();
@@ -22,20 +27,26 @@ public class ApplicationContext {
 
     public void run() {
 
-        WebServer server = new WebServer(8080, 10);
+        WebServer server = new WebServer(PORT, THREADS);
 
         try {
 
             DatabaseManager.init();
-            UserModel user = this.userService.createDefaultUser();
+            UserResponseDTO admin =  this.userService.createAdmin().get();
+//            if (!cfg.getAuthenticatedUsers().isEmpty()) {
+//                for(UserDTO user : cfg.getAuthenticatedUsers()) {
+//                    this.userService.createAdmin()
+//                }
+//            }
 
-            LOGGER.info("Database created on {}", this.cfg.getDatabasePath());
-            LOGGER.info("User created with username {} and password {}", user.getUsername(), user.getPassword());
+
+            LOGGER.info("User created with username {} and password {}", admin.username(), admin.password());
 
             server.start();
 
         } catch (Exception e) {
-//            server.stop();
+            server.stop();
+            DatabaseManager.shutdownEntityManager();
             LOGGER.error(e.getMessage());
             throw new ApplicationContextException(e);
         }

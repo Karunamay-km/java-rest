@@ -1,8 +1,7 @@
-package org.karunamay.core.api.authentication.model;
+package org.karunamay.core.authentication.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import org.karunamay.core.authentication.model.AbstractBaseUserModel;
 
 @Entity
 @Table(name = "UserTable")
