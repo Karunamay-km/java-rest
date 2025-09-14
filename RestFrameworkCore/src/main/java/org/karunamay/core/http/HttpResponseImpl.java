@@ -4,13 +4,7 @@ import org.karunamay.core.api.http.HttpHeader;
 import org.karunamay.core.api.http.HttpResponse;
 import org.karunamay.core.api.http.HttpStatus;
 
-class HttpResponseImpl implements HttpResponse {
-
-    private final String httpVersion;
-    private final HttpStatus status;
-    private final String responsePhrase;
-    private final HttpHeader headers;
-    private final String body;
+class HttpResponseImpl extends AbstractHttpResponse implements HttpResponse {
 
     public HttpResponseImpl(
             String httpVersion,

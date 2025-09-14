@@ -1,5 +1,6 @@
 package org.karunamay.core.internal;
 
+import org.karunamay.core.api.config.ConfigManager;
 import org.karunamay.core.api.controller.RestControllerConfig;
 import org.karunamay.core.api.http.HttpContext;
 import org.karunamay.core.api.http.HttpRequest;
@@ -24,12 +25,11 @@ public class HttpRequestDispatcher {
         for (RouterConfig config : loader) {
             config.configure(registry);
         }
-        RouteRegistryImpl.getInstance().getRoutes().forEach((k, v) -> {
-            System.out.println(k + ": " + v.getPath());
-        });
         Route<?> route = RouteRegistryImpl.getInstance().getRoute(request.getPath());
-
         Class<?> cls = route.getController();
+
+//        System.out.println(ConfigManager.getDatabasePath());
+        System.out.println(ConfigManager.getInstance().getDatabasePath());
 
         try {
             if (RestControllerConfig.class.isAssignableFrom(cls)) {
@@ -43,7 +43,7 @@ public class HttpRequestDispatcher {
                 }
             } else {
                 throw new IllegalStateException(
-                        String.format("class %s must implements the HttpResponseHandler interface.", cls.getName())
+                        String.format("class %s must implements the RestControllerConfig interface.", cls.getName())
                 );
             }
         } catch (Exception e) {

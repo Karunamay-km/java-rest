@@ -27,6 +27,4 @@ public class WebServer {
         connectionListener.stop();
         threadPoolManager.shutdown();
     }
-
-
 }

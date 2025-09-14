@@ -3,14 +3,7 @@ package org.karunamay.core.http;
 import org.karunamay.core.api.http.HttpHeader;
 import org.karunamay.core.api.http.HttpStatus;
 
-class HttpResponseBuilder {
-
-    private HttpStatus status;
-    private String responsePhrase;
-    private String httpVersion;
-    private HttpHeader headers;
-    private String body;
-
+class HttpResponseBuilder extends AbstractHttpResponse {
     public HttpResponseBuilder withStatus(HttpStatus status) {
         this.status = status;
         return this;
@@ -39,5 +32,4 @@ class HttpResponseBuilder {
     public HttpResponseImpl build() {
         return new HttpResponseImpl(httpVersion, status, responsePhrase, body, headers);
     }
-
 }
