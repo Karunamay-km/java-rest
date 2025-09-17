@@ -1,15 +1,12 @@
 package org.karunamay.core.internal;
 
 import org.karunamay.core.api.controller.RestControllerConfig;
-import org.karunamay.core.api.router.Annotation.NestedRoute;
 import org.karunamay.core.api.router.RouteComponent;
 import org.karunamay.core.api.router.RouteRegistry;
 import org.karunamay.core.api.router.RouterConfig;
 import org.karunamay.core.exception.NoRouteFoundException;
-import org.karunamay.core.router.Route;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 
@@ -47,41 +44,32 @@ class RouteRegistryImpl implements RouteRegistry {
     }
 
     @Override
-    public <T extends RestControllerConfig> void register(String path, Class<T> controller, String name) {
-        System.out.println(this.getClass().isAnnotationPresent(NestedRoute.class));
-        this.routes.put(path, new Route<>(path, controller, name));
-        routesNameMapper.put(name, path);
-    }
-
-    @Override
-    public <T extends RouterConfig> void include(String path, Class<T> router, String of) {
-
-    }
-
-    @Override
     public void add(
             String parentRouteName, Supplier<List<RouteComponent<?>>> routes
     ) {
-        System.out.println(routesNameMapper);
         String parentRoute = routesNameMapper.get(parentRouteName);
         if (parentRoute == null) {
             routeLoaderQueue.add(new Pair<>(parentRouteName, routes.get()));
         } else {
             for (RouteComponent<?> route : routes.get()) {
                 String path = parentRoute + route.getPath();
-                this.register(path, route.getController(), route.getName());
+                this.register(path, route);
             }
+        }
+    }
+
+    @Override
+    public void add(Supplier<List<RouteComponent<?>>> routes) {
+        for (RouteComponent<?> route : routes.get()) {
+            this.register(route);
         }
     }
 
     public static void configureRoutes() {
         ServiceLoader<RouterConfig> loader = ServiceLoader.load(RouterConfig.class);
-        System.out.println(loader);
         for (RouterConfig config : loader) {
             config.configure(INSTANCE);
         }
-        // check the queue
-        // if routes are in queue push them in registry.
         if (!routeLoaderQueue.isEmpty()) {
             for (Pair<String, List<RouteComponent<?>>> route : routeLoaderQueue) {
                 String parentRoute = routesNameMapper.get(route.key);
@@ -93,9 +81,16 @@ class RouteRegistryImpl implements RouteRegistry {
         }
     }
 
-//    private void processRouteLoaderQueue(Pair ) {
-//
-//    }
+    private <T extends RestControllerConfig> void register(RouteComponent<T> route) {
+        this.routes.put(route.getPath(), route);
+        routesNameMapper.put(route.getName(), route.getPath());
+    }
+
+    private <T extends RestControllerConfig> void register(String modifiedPath, RouteComponent<T> route) {
+        this.routes.put(modifiedPath, route);
+        routesNameMapper.put(route.getName(), modifiedPath);
+    }
+
 
     record Pair<K, V>(K key, V value) {
     }

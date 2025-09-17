@@ -10,13 +10,11 @@ public interface RouteRegistry {
 
     Map<String, RouteComponent<?>> getRoutes();
 
-    <T extends RestControllerConfig> void register(String path, Class<T> controller, String name);
-
-    <T extends RouterConfig> void include(String path, Class<T> router, String of);
-
     Map<String, String> getRoutesNameMapper();
 
     <T extends RestControllerConfig> RouteComponent<T> getRoute(String key);
 
     void add(String parentRouteName, Supplier<List<RouteComponent<?>>> listSupplier);
+
+    void add(Supplier<List<RouteComponent<?>>> routes);
 }
