@@ -1,9 +1,7 @@
 package org.karunamay.core.api;
 
-import org.karunamay.core.api.authentication.UserDTO;
-import org.karunamay.core.api.authentication.UserResponseDTO;
-import org.karunamay.core.authentication.model.UserModel;
 import org.karunamay.core.api.config.ConfigManager;
+import org.karunamay.core.authentication.JWT.Jwt;
 import org.karunamay.core.authentication.UserService;
 import org.karunamay.core.db.DatabaseManager;
 import org.karunamay.core.exception.ApplicationContextException;
@@ -20,35 +18,43 @@ public class ApplicationContext {
     private ConfigManager cfg;
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
     private final UserService userService = new UserService();
+    private final WebServer server = new WebServer(PORT, THREADS);
 
     public ApplicationContext(ConfigManager configManager) {
         this.cfg = configManager;
     }
 
     public void run() {
-
-        WebServer server = new WebServer(PORT, THREADS);
-
         try {
 
-            DatabaseManager.init();
-            UserResponseDTO admin =  this.userService.createAdmin().get();
-//            if (!cfg.getAuthenticatedUsers().isEmpty()) {
-//                for(UserDTO user : cfg.getAuthenticatedUsers()) {
-//                    this.userService.createAdmin()
-//                }
-//            }
+            this.userService.createAdmin().get();
+            Jwt.generateKeys();
+            Jwt jwt = new Jwt();
+            System.out.println(jwt.createJwt());
 
-
-            LOGGER.info("User created with username {} and password {}", admin.username(), admin.password());
-
+            LOGGER.info("Default superuser created with username 'admin' and password 'admin'");
             server.start();
 
         } catch (Exception e) {
-            server.stop();
-            DatabaseManager.shutdownEntityManager();
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Application startup failed", e);
+            terminate();
             throw new ApplicationContextException(e);
+        }
+    }
+
+    public void terminate() {
+        try {
+            server.stop();
+            LOGGER.info("Server stopped.");
+        } catch (Exception e) {
+            LOGGER.warn("Failed to stop server ", e);
+        }
+
+        try {
+            DatabaseManager.shutdownEntityManager();
+            LOGGER.info("Database connection closed.");
+        } catch (Exception e) {
+            LOGGER.warn("Failed to close database connection ", e);
         }
     }
 }

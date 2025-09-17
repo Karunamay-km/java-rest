@@ -14,6 +14,8 @@
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.hbm2ddl.schema-generation.scripts.action" value="create"/>
             <property name="hibernate.hbm2ddl.schema-generation.scripts.create-target" value="schema.sql"/>
+            <property name="hibernate.connection.release_mode" value="after_transaction"/>
+            <property name="hibernate.connection.pool_size" value="1"/>
         </properties>
     </persistence-unit>
 </persistence>

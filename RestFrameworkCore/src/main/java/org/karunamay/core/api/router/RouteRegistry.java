@@ -1,15 +1,22 @@
 package org.karunamay.core.api.router;
 
 import org.karunamay.core.api.controller.RestControllerConfig;
-import org.karunamay.core.router.Route;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public interface RouteRegistry {
 
-    Map<String, Route<?>> getRoutes();
+    Map<String, RouteComponent<?>> getRoutes();
 
     <T extends RestControllerConfig> void register(String path, Class<T> controller, String name);
 
-    Route<?> getRoute(String key);
+    <T extends RouterConfig> void include(String path, Class<T> router, String of);
+
+    Map<String, String> getRoutesNameMapper();
+
+    <T extends RestControllerConfig> RouteComponent<T> getRoute(String key);
+
+    void add(String parentRouteName, Supplier<List<RouteComponent<?>>> listSupplier);
 }

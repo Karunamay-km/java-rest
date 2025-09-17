@@ -5,6 +5,8 @@ module org.karunamay.core {
     requires jakarta.persistence;
     requires org.hibernate.orm.core;
     requires org.hibernate.orm.community.dialects;
+    requires java.xml.crypto;
+    requires jjwt.api;
 
     exports org.karunamay.core.api.http;
     exports org.karunamay.core.api.controller;
@@ -17,4 +19,5 @@ module org.karunamay.core {
     uses org.karunamay.core.api.router.RouterConfig;
 
     opens org.karunamay.core.authentication.model to org.hibernate.orm.core;
+    exports org.karunamay.core.api.router.Annotation;
 }

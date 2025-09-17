@@ -26,14 +26,10 @@ class ConnectionHandler implements Runnable {
                 InputStream inputStream = clientSocket.getInputStream();
                 OutputStream outputStream = clientSocket.getOutputStream();
         ) {
-
             logger.info("Handling client {}", clientSocket.getRemoteSocketAddress());
 
             HttpRequest httpRequest = HttpRequestParser.parse(inputStream);
-//            HttpResponse httpResponse = new Http
             HttpContext context = new HttpContextImpl(httpRequest, outputStream);
-//            RequestDispatcher.dispatch(context);
-
             HttpRequestDispatcher.dispatch(context);
 
             logger.info("Closing connection with {}", clientSocket.getRemoteSocketAddress());

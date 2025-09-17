@@ -28,4 +28,7 @@ public class UserService {
     public Optional<UserResponseDTO> getUserById(Long id) {
         return this.userRepository.findById(id);
     }
+
+
+
 }

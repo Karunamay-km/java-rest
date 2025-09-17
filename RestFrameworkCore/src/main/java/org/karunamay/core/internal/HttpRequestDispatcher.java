@@ -4,6 +4,8 @@ import org.karunamay.core.api.config.ConfigManager;
 import org.karunamay.core.api.controller.RestControllerConfig;
 import org.karunamay.core.api.http.HttpContext;
 import org.karunamay.core.api.http.HttpRequest;
+import org.karunamay.core.api.router.Annotation.NestedRoute;
+import org.karunamay.core.api.router.RouteComponent;
 import org.karunamay.core.api.router.RouteRegistry;
 import org.karunamay.core.api.router.RouterConfig;
 import org.karunamay.core.router.Route;
@@ -17,21 +19,18 @@ public class HttpRequestDispatcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestDispatcher.class);
 
     public static void dispatch(HttpContext httpContext) {
-
-        HttpRequest request = httpContext.getRequest();
-        RouteRegistry registry = RouteRegistryImpl.getInstance();
-
-        ServiceLoader<RouterConfig> loader = ServiceLoader.load(RouterConfig.class);
-        for (RouterConfig config : loader) {
-            config.configure(registry);
-        }
-        Route<?> route = RouteRegistryImpl.getInstance().getRoute(request.getPath());
-        Class<?> cls = route.getController();
-
-//        System.out.println(ConfigManager.getDatabasePath());
-        System.out.println(ConfigManager.getInstance().getDatabasePath());
-
         try {
+            HttpRequest request = httpContext.getRequest();
+            RouteRegistry registry = RouteRegistryImpl.getInstance();
+
+            RouteRegistryImpl.configureRoutes();
+
+            System.out.println(registry.getRoutes());
+            System.out.println(registry.getRoutesNameMapper());
+            System.out.println(request.getPath());
+            RouteComponent<RestControllerConfig> route = RouteRegistryImpl.getInstance().getRoute(request.getPath());
+            Class<?> cls = route.getController();
+
             if (RestControllerConfig.class.isAssignableFrom(cls)) {
                 RestControllerConfig dispatcherClass = (RestControllerConfig) cls.getDeclaredConstructor().newInstance();
                 switch (request.getMethod()) {
@@ -47,6 +46,7 @@ public class HttpRequestDispatcher {
                 );
             }
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error(e.getMessage());
         }
     }

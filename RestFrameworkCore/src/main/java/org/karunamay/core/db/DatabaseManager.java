@@ -26,7 +26,7 @@ public class DatabaseManager {
         }
     }
 
-    public static EntityManagerFactory getEntityManagerfactory () {
+    public static EntityManagerFactory getEntityManagerfactory() {
         return manager;
     }
 
@@ -35,7 +35,7 @@ public class DatabaseManager {
     }
 
     public static void shutdownEntityManager() {
-        if (getEntityManagerfactory().isOpen()) {
+        if (getEntityManagerfactory() != null && getEntityManagerfactory().isOpen()) {
             getEntityManagerfactory().close();
         }
     }
@@ -48,15 +48,17 @@ public class DatabaseManager {
             Optional<T> result = action.apply(em);
             tx.commit();
             return result;
-        } finally {
+        } catch (Exception e) {
             if (tx.isActive()) {
                 tx.rollback();
             }
+            throw new RuntimeException(e);
+        } finally {
             em.close();
         }
     }
 
-    public static <T> Optional<T> executeRead(Function<EntityManager , Optional<T>> action) {
+    public static <T> Optional<T> executeRead(Function<EntityManager, Optional<T>> action) {
         try (EntityManager em = getEntityManager()) {
             return action.apply(em);
         }

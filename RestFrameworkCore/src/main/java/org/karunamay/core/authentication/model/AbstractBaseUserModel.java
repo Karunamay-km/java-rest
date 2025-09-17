@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-public abstract class AbstractBaseUserModel {
+public abstract class AbstractBaseUserModel extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +25,6 @@ public abstract class AbstractBaseUserModel {
     @Column(updatable = false)
     private Instant lastLogin;
 
-    @Column(updatable = false, nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     public AbstractBaseUserModel() {
     }
@@ -78,21 +73,5 @@ public abstract class AbstractBaseUserModel {
 
     public void setLastLogin(Instant lastLogin) {
         this.lastLogin = lastLogin;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

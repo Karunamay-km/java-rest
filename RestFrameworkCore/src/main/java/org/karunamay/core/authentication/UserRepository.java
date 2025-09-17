@@ -5,6 +5,7 @@ import org.karunamay.core.api.authentication.UserDTO;
 import org.karunamay.core.api.authentication.UserResponseDTO;
 import org.karunamay.core.authentication.model.UserModel;
 import org.karunamay.core.db.DatabaseManager;
+import org.karunamay.core.security.PasswordHasher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +74,8 @@ class UserRepository {
         Optional<UserResponseDTO> userResponseDTO = this.findByUsername(DEFAULT_ADMIN);
         if (userResponseDTO.isEmpty()) {
             return DatabaseManager.executeWrite(em -> {
-                UserModel userModel = new UserModel(DEFAULT_ADMIN, "", DEFAULT_PASSWORD);
+                String password = PasswordHasher.hash(DEFAULT_PASSWORD);
+                UserModel userModel = new UserModel(DEFAULT_ADMIN, "", password);
                 em.persist(userModel);
                 return Optional.of(UserMapper.toResponseDTO(userModel));
             });
