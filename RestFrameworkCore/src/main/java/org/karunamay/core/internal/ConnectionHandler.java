@@ -1,8 +1,7 @@
 package org.karunamay.core.internal;
 
-import org.karunamay.core.api.http.HttpContext;
+import org.karunamay.core.api.http.ApplicationContext;
 import org.karunamay.core.api.http.HttpRequest;
-import org.karunamay.core.api.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,11 @@ class ConnectionHandler implements Runnable {
             logger.info("Handling client {}", clientSocket.getRemoteSocketAddress());
 
             HttpRequest httpRequest = HttpRequestParser.parse(inputStream);
-            HttpContext context = new HttpContextImpl(httpRequest, outputStream);
+            System.out.println(httpRequest);
+            ApplicationContext context = new ApplicationContextImpl();
+            context.setHttpRequest(httpRequest);
+            context.setOutputStream(outputStream);
+            context.setResponseHeader(httpRequest.getHeaders());
             HttpRequestDispatcher.dispatch(context);
 
             logger.info("Closing connection with {}", clientSocket.getRemoteSocketAddress());

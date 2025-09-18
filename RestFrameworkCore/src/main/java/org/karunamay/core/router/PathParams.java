@@ -1,7 +1,13 @@
 package org.karunamay.core.router;
 
-final public class PathParams extends AbstractPathParams {
-    public PathParams() {
-        super();
+import java.util.ArrayList;
+import java.util.List;
+
+final public class PathParams {
+
+    private List<PathParameterImpl> parameterImplList = new ArrayList<>();
+
+    public List<PathParameterImpl> getParameterList() {
+        return parameterImplList;
     }
 }

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public abstract class AbstractHttpResponseWriter {
-    protected static <T> void responseSend(T body, HttpStatus status, HttpContext context) throws IOException {
+    protected static <T> void responseSend(T body, HttpStatus status, ApplicationContext context) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setDefaultPropertyInclusion(JsonInclude.Include.USE_DEFAULTS);

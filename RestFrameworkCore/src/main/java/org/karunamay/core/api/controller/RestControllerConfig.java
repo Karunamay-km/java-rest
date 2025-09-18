@@ -1,13 +1,13 @@
 package org.karunamay.core.api.controller;
 
 
-import org.karunamay.core.api.http.HttpContext;
+import org.karunamay.core.api.http.ApplicationContext;
 
 public interface RestControllerConfig {
 
-    void get(HttpContext context);
-    void post(HttpContext httpContext);
-    void put(HttpContext httpContext);
-    void patch(HttpContext httpContext);
-    void delete(HttpContext httpContext);
+    void get(ApplicationContext context);
+    void post(ApplicationContext httpContext);
+    void put(ApplicationContext httpContext);
+    void patch(ApplicationContext httpContext);
+    void delete(ApplicationContext httpContext);
 }
