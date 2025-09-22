@@ -26,20 +26,24 @@ class HttpRequestParser {
 
     public static HttpRequest parse(InputStream inputStream) throws Exception {
         BufferedReader bf = getBufferedReader(inputStream);
-        RequestLine requestLine = new RequestLine(getRequestLine(bf));
-        method = HttpMethod.valueOf(requestLine.getMethod());
-        path = requestLine.getUri().getPath();
-        headers = headerParser(bf);
-        queryParams = queryParamParser(requestLine.getUri());
-        httpVersion = requestLine.getHttpVersion();
+        RequestLine requestLine = new RequestLine(getRequestLine(bf)).initRequestLineObject();
+        if (requestLine != null) {
+            method = HttpMethod.valueOf(requestLine.getMethod());
+            path = requestLine.getUri().getPath();
+            headers = headerParser(bf);
+            queryParams = queryParamParser(requestLine.getUri());
+            httpVersion = requestLine.getHttpVersion();
 
-        return new HttpRequestBuilder()
-                .withMethod(method)
-                .withPath(path)
-                .withHeaders(headers)
-                .withQueryParams(queryParams)
-                .withHttpVersion(httpVersion)
-                .build();
+            return new HttpRequestBuilder()
+                    .withMethod(method)
+                    .withPath(path)
+                    .withHeaders(headers)
+                    .withQueryParams(queryParams)
+                    .withHttpVersion(httpVersion)
+                    .build();
+        }
+
+        return null;
     }
 
     public HttpMethod getMethod() {
@@ -67,20 +71,38 @@ class HttpRequestParser {
     }
 
     private static String getRequestLine(BufferedReader bf) throws IOException {
+        System.out.println(bf.lines().toString());
         return bf.readLine();
     }
 
     private static class RequestLine {
 
-        private final String method;
-        private final String httpVersion;
-        private final URI uri;
+        private final String line;
+        private String method;
+        private String httpVersion;
+        private URI uri;
 
         RequestLine(String line) throws URISyntaxException {
-            String[] requestLine = line.split(" ");
-            this.method = requestLine[0];
-            this.uri = new URI(requestLine[1]);
-            this.httpVersion = requestLine[2];
+//            System.out.println("line" + line);
+            this.line = line;
+//            if (line != null) {
+//                String[] requestLine = line.split(" ");
+//                this.method = requestLine[0];
+//                this.uri = new URI(requestLine[1]);
+//                this.httpVersion = requestLine[2];
+//            };
+        }
+
+        public RequestLine initRequestLineObject() throws URISyntaxException {
+            if (this.line != null) {
+                String[] requestLine = line.split(" ");
+                this.method = requestLine[0];
+                this.uri = new URI(requestLine[1]);
+                this.httpVersion = requestLine[2];
+
+                return this;
+            }
+            return null;
         }
 
         public String getMethod() {

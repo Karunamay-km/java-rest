@@ -7,12 +7,14 @@ module org.karunamay.core {
     requires org.hibernate.orm.community.dialects;
     requires java.xml.crypto;
     requires jjwt.api;
+    requires com.fasterxml.jackson.annotation;
 
     exports org.karunamay.core.api.http;
     exports org.karunamay.core.api.controller;
     exports org.karunamay.core.api.router;
     exports org.karunamay.core.api.annotation;
     exports org.karunamay.core.api.config;
+    exports org.karunamay.core.api.middleware;
     exports org.karunamay.core.api;
     exports org.karunamay.core.authentication.model;
 

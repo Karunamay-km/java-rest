@@ -51,8 +51,8 @@ public class RouteRegistryImpl implements RouteRegistry {
 //            return requestPathToRawPathMapper();
 //        }
 //        return (RouteComponent<T>) this.routes.get(route);
-        System.out.println("route component: " + routeComponent.getRawPath());
-        this.parsePathParameters(routeComponent);
+//        System.out.println("route component: " + routeComponent.getRawPath());
+//        this.parsePathParameters(routeComponent);
         return routeComponent;
     }
 
@@ -149,7 +149,10 @@ public class RouteRegistryImpl implements RouteRegistry {
             }
         });
         System.out.println(routeName);
-        return (RouteComponent<T>) this.routes.get(routeName.get(0));
+        if (!routeName.isEmpty()) {
+            return (RouteComponent<T>) this.routes.get(routeName.get(0));
+        }
+        return null;
     }
 
     private <T extends RestControllerConfig> void parsePathParameters(RouteComponent<T> route) {

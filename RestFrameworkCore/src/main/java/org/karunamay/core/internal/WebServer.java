@@ -1,10 +1,6 @@
 package org.karunamay.core.internal;
 
-import org.karunamay.core.api.router.RouteRegistry;
-import org.karunamay.core.api.router.RouterConfig;
-
 import java.io.IOException;
-import java.util.ServiceLoader;
 
 public class WebServer {
 

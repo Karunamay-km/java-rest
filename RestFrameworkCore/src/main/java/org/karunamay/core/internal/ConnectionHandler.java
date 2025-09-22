@@ -1,7 +1,10 @@
 package org.karunamay.core.internal;
 
+import org.karunamay.core.Error.HttpError;
+import org.karunamay.core.api.config.ConfigManager;
 import org.karunamay.core.api.http.ApplicationContext;
 import org.karunamay.core.api.http.HttpRequest;
+import org.karunamay.core.middleware.MiddlewareHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,14 +12,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 class ConnectionHandler implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectionHandler.class);
     private final Socket clientSocket;
+    private final Consumer<Socket> onCloseCallback;
 
-    public ConnectionHandler(Socket clientSocket) {
+    public ConnectionHandler(Socket clientSocket, Consumer<Socket> onCloseCallback) {
         this.clientSocket = clientSocket;
+        this.onCloseCallback = onCloseCallback;
     }
 
     @Override
@@ -27,21 +34,47 @@ class ConnectionHandler implements Runnable {
         ) {
             logger.info("Handling client {}", clientSocket.getRemoteSocketAddress());
 
-            HttpRequest httpRequest = HttpRequestParser.parse(inputStream);
-            System.out.println(httpRequest);
-            ApplicationContext context = new ApplicationContextImpl();
-            context.setHttpRequest(httpRequest);
-            context.setOutputStream(outputStream);
-            context.setResponseHeader(httpRequest.getHeaders());
-            HttpRequestDispatcher.dispatch(context);
+            while (true) {
+                HttpRequest httpRequest = HttpRequestParser.parse(inputStream);
 
-            logger.info("Closing connection with {}", clientSocket.getRemoteSocketAddress());
-            clientSocket.close();
+                ApplicationContext context = new ApplicationContextImpl();
+                context.setOutputStream(outputStream);
 
+                if (httpRequest == null) {
+                    HttpError.badRequest400(context);
+//                    break;
+                } else {
+                    context.setHttpRequest(httpRequest);
+                    context.setResponseHeader(httpRequest.getHeaders());
+                    context.setConfigManager(ConfigManager.getInstance());
+                    context.setRequestMiddlewares(ConfigManager.getInstance().getRequestMiddlewares());
+                    context.setResponseMiddlewares(ConfigManager.getInstance().getResponseMiddlewares());
+
+                    boolean continueChain = MiddlewareHandler.executePipeline(context, context.getRequestMiddlewares());
+
+                    if (!continueChain && !context.isResponseWritten()) {
+                        MiddlewareHandler.terminateExecution(context);
+                    }
+                    if (continueChain) HttpRequestDispatcher.dispatch(context);
+
+                    Optional<String> connectionHeader = httpRequest.getHeaders().get("Connection");
+                    if (connectionHeader.isPresent() && connectionHeader.get().equals("close")) {
+                        break;
+                    }
+                }
+            }
         } catch (IOException e) {
             logger.warn("Connection error with {}: {}", clientSocket.getRemoteSocketAddress(), e.getMessage());
         } catch (Exception e) {
+            logger.error("Unexpected error while handling client {}", clientSocket.getRemoteSocketAddress(), e);
             throw new RuntimeException(e);
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                onCloseCallback.accept(clientSocket);
+                logger.info("Closed connection with {}", clientSocket.getRemoteSocketAddress());
+            }
         }
     }
 }

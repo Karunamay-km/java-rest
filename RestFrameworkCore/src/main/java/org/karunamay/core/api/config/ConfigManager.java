@@ -1,8 +1,9 @@
 package org.karunamay.core.api.config;
 
 import org.karunamay.core.api.authentication.UserDTO;
-import org.karunamay.core.authentication.model.UserModel;
+import org.karunamay.core.api.middleware.Middleware;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class ConfigManager {
@@ -11,6 +12,8 @@ public class ConfigManager {
     private String databasePath;
     private List<UserDTO> authenticatedUsers;
     private String cwd = System.getProperty("user.dir");
+    private List<Middleware> requestMiddlewares = new LinkedList<>();
+    private List<Middleware> responseMiddlewares = new LinkedList<>();
 
     public String getCwd() {
         return cwd;
@@ -32,12 +35,28 @@ public class ConfigManager {
         this.authenticatedUsers = authenticatedUsers;
     }
 
+    public List<Middleware> getRequestMiddlewares() {
+        return requestMiddlewares;
+    }
+
+    public List<Middleware> getResponseMiddlewares() {
+        return responseMiddlewares;
+    }
+
     public List<UserDTO> getAuthenticatedUsers() {
         return authenticatedUsers;
     }
 
     public static ConfigManager getInstance() {
         return instance;
+    }
+
+    public void setRequestMiddlewares(List<Middleware> requestMiddlewares) {
+        this.requestMiddlewares = requestMiddlewares;
+    }
+
+    public void setResponseMiddlewares(List<Middleware> responseMiddlewares) {
+        this.responseMiddlewares = responseMiddlewares;
     }
 
     public static Builder configure() {
@@ -59,6 +78,16 @@ public class ConfigManager {
 
         public Builder withAuthenticatedUser(List<UserDTO> users) {
             this.cfg.setAuthenticatedUsers(users);
+            return this;
+        }
+
+        public Builder withRequestMiddleware(List<Middleware> middlewares) {
+            this.cfg.setRequestMiddlewares(middlewares);
+            return this;
+        }
+
+        public Builder withResponseMiddleware(List<Middleware> middlewares) {
+            this.cfg.setResponseMiddlewares(middlewares);
             return this;
         }
 

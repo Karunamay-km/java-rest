@@ -20,24 +20,51 @@ class HttpResponseImpl extends AbstractHttpResponse implements HttpResponse {
         this.body = body;
     }
 
+    @Override
     public String getHttpVersion() {
         return this.httpVersion;
     }
 
+    @Override
     public HttpStatus getStatus() {
         return this.status;
     }
 
+    @Override
     public String getResponsePhrase() {
         return this.responsePhrase;
     }
 
+    @Override
     public HttpHeader getHeaders() {
         return this.headers;
     }
 
+    @Override
     public String getBody() {
         return this.body;
+    }
+
+    @Override
+    public String buildHeaderAndStatusLine() {
+        StringBuilder response = new StringBuilder();
+
+        response.append(this.httpVersion)
+                .append(" ")
+                .append(this.status.getCode())
+                .append(" ")
+                .append(this.responsePhrase)
+                .append("\r\n");
+
+        this.headers.asMap().forEach((k, v) -> {
+            response.append(k)
+                    .append(": ")
+                    .append(v)
+                    .append("\r\n");
+        });
+
+        response.append("\r\n");
+        return response.toString();
     }
 
     @Override
