@@ -1,6 +1,8 @@
 package org.karunamay.core.authentication.JWT;
 
 import io.jsonwebtoken.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,12 +10,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,20 +22,19 @@ public class Jwt {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Jwt.class);
 
+    @Setter
     private Map<String, ?> headers = new HashMap<>();
+    @Setter
     private Map<String, ?> claims = new HashMap<>();
-    private final Date expiration = new Date(System.currentTimeMillis() + 3600_000);
+    @Getter
+//    private final LocalDateTime accessTokenExpiration = new Date(System.currentTimeMillis() + 3600);
+    private final LocalDateTime accessTokenExpiration = LocalDateTime.now().plusSeconds(3600);
+    @Getter
+    private final LocalDateTime refreshTokenExpiration = LocalDateTime.now().plusSeconds(3600_000);
     private final Date issuedAt = new Date();
     private final String issuer = "core-api";
     private final String audience = "client";
 
-    public void setClaims(Map<String, ?> claims) {
-        this.claims = claims;
-    }
-
-    public void setHeaders(Map<String, ?> headers) {
-        this.headers = headers;
-    }
 
     public static void generateKeys() {
         File pvtKey = new File("keys/private_key.pem");
@@ -69,7 +68,7 @@ public class Jwt {
             return Jwts.builder()
                     .issuer(issuer)
                     .audience().add(audience).and()
-                    .expiration(expiration)
+                    .expiration(accessTokenExpiration)
                     .issuedAt(issuedAt)
                     .claims(claims)
                     .header().add(headers).and()
@@ -77,6 +76,36 @@ public class Jwt {
                     .compact();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public String createRefreshToken() {
+        try {
+            return Jwts.builder()
+                    .issuer(issuer)
+                    .audience().add(audience).and()
+                    .expiration(refreshTokenExpiration)
+                    .issuedAt(issuedAt)
+                    .claims(claims)
+                    .header().add(headers).and()
+                    .signWith(KeyLoader.loadPrivateKey())
+                    .compact();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean verifyToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(KeyLoader.loadPublicKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error occurred when validating token: {} ", e.getMessage(), e);
+            return false;
         }
     }
 

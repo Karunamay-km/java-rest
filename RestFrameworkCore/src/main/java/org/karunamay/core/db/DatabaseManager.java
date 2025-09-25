@@ -1,9 +1,8 @@
 package org.karunamay.core.db;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.*;
+import org.hibernate.ObjectNotFoundException;
+import org.karunamay.core.exception.DatabaseOperationException;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -48,10 +47,11 @@ public class DatabaseManager {
             Optional<T> result = action.apply(em);
             tx.commit();
             return result;
+        } catch (PersistenceException | IllegalStateException e) {
+            if (tx.isActive()) tx.rollback();
+            throw new DatabaseOperationException("Database operation exception: ", e);
         } catch (Exception e) {
-            if (tx.isActive()) {
-                tx.rollback();
-            }
+            if (tx.isActive()) tx.rollback();
             throw new RuntimeException(e);
         } finally {
             em.close();

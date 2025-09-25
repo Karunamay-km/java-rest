@@ -40,6 +40,7 @@ public abstract class AbstractHttpResponseWriter {
     }
 
     protected static <T> void badResponseSend(ApplicationContext context) throws Exception {
+//        TODO: Refactor as above
         ObjectMapper mapper = new ObjectMapper();
         mapper.setDefaultPropertyInclusion(JsonInclude.Include.USE_DEFAULTS);
 

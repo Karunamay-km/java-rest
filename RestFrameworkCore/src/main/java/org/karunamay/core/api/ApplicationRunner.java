@@ -2,7 +2,7 @@ package org.karunamay.core.api;
 
 import org.karunamay.core.api.config.ConfigManager;
 import org.karunamay.core.authentication.JWT.Jwt;
-import org.karunamay.core.authentication.UserService;
+import org.karunamay.core.api.service.UserService;
 import org.karunamay.core.db.DatabaseManager;
 import org.karunamay.core.exception.ApplicationContextException;
 import org.karunamay.core.internal.RouteRegistryImpl;
@@ -29,11 +29,8 @@ public class ApplicationRunner {
         try {
 
             RouteRegistryImpl.configureRoutes();
-            this.userService.createAdmin().get();
+            this.userService.createAdmin();
             Jwt.generateKeys();
-            Jwt jwt = new Jwt();
-            System.out.println(jwt.createJwt());
-
             LOGGER.info("Default superuser created with username 'admin' and password 'admin'");
             server.start();
 

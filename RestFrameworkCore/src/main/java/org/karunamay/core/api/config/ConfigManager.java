@@ -1,6 +1,6 @@
 package org.karunamay.core.api.config;
 
-import org.karunamay.core.api.authentication.UserDTO;
+import org.karunamay.core.api.dto.UserDTO;
 import org.karunamay.core.api.middleware.Middleware;
 
 import java.util.LinkedList;

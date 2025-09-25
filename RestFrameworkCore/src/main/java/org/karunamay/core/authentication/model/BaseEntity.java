@@ -1,12 +1,11 @@
 package org.karunamay.core.authentication.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PostPersist;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 @MappedSuperclass
 public abstract class BaseEntity {
 
@@ -23,16 +22,8 @@ public abstract class BaseEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @PostPersist
+    @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 }

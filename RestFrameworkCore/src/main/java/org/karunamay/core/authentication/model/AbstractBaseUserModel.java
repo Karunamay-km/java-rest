@@ -1,12 +1,20 @@
 package org.karunamay.core.authentication.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.karunamay.core.security.PasswordHasher;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 
+
+@Getter
 @MappedSuperclass
-public abstract class AbstractBaseUserModel extends BaseEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+abstract class AbstractBaseUserModel extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,9 +22,11 @@ public abstract class AbstractBaseUserModel extends BaseEntity {
     private Long ID;
 
     @Column(length = 40, unique = true, nullable = false)
+    @Setter(AccessLevel.PROTECTED)
     private String username;
 
     @Column(nullable = false)
+    @Setter(AccessLevel.PRIVATE)
     private String password;
 
     @Column(unique = true, nullable = false)
@@ -25,53 +35,22 @@ public abstract class AbstractBaseUserModel extends BaseEntity {
     @Column(updatable = false)
     private Instant lastLogin;
 
-
-    public AbstractBaseUserModel() {
-    }
-
-    public AbstractBaseUserModel(String username, String password, String email) {
+    protected AbstractBaseUserModel(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
     }
 
-    public Long getID() {
-        return ID;
+    protected String hashPassword() {
+        return PasswordHasher.hash(this.getPassword());
     }
 
-    public void setID(Long ID) {
-        this.ID = ID;
+    protected boolean matchPassword(String password) {
+        return this.getPassword().equals(PasswordHasher.hash(password));
     }
 
-    public String getUsername() {
-        return username;
-    }
+    protected void changePassword(String password) {
+        this.setPassword(PasswordHasher.hash(password));
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Instant getLastLogin() {
-        return lastLogin;
-    }
-
-    public void setLastLogin(Instant lastLogin) {
-        this.lastLogin = lastLogin;
     }
 }

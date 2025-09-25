@@ -5,6 +5,7 @@ public enum HttpStatus {
     HTTP_NOT_FOUND(404, "Not Found"),
     HTTP_BAD_REQUEST(400, "Bad Request"),
     HTTP_SERVER_ERROR(500, "Server Error"),
+    HTTP_AUTHENTICATION_SUCCESS(204, "Authentication Success"),
     HTTP_CREATE(201, "Created");
 
     final int code;
