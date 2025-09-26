@@ -46,14 +46,13 @@ public class authenticationService {
             Long userId, String oldPassword, String newPassword) {
         UserModel user = userService.getUserEntityById(userId);
         if (user.isPasswordMatched(oldPassword)) {
-            Map<String, String> dto = new HashMap<>(
+            Map<String, Object> dto = new HashMap<>(
                     Map.of("password", newPassword)
             );
             userService.partialUserUpdate(userId, dto);
         }
         throw new InvalidCredentialsException("Password didn't matched");
     }
-
 
 
 //    private Optional<?> createTokenResponse

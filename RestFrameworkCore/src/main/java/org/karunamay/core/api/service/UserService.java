@@ -12,6 +12,7 @@ import org.karunamay.core.exception.DatabaseOperationException;
 import org.karunamay.core.exception.DuplicateObjectException;
 import org.karunamay.core.exception.ObjectNotFoundException;
 import org.karunamay.core.exception.ServiceException;
+import org.karunamay.core.security.PasswordHasher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,24 +25,16 @@ public class UserService {
 
     private final UserRepository userRepository = new UserRepository();
 
-    public boolean isUserExist(Long id) {
-        UserResponseDTO user = this.getUserDTOById(id);
-        return user != null;
-    }
-
-    public boolean isUserExist(String fieldName, String value) {
-        UserResponseDTO user = this.getUserDTOByField(fieldName, value);
-        return user != null;
-    }
-
     public UserResponseDTO createUser(UserDTO user) {
         try {
+            String hashPassword = PasswordHasher.hash(user.getPassword());
+            user.setPassword(hashPassword);
             return userRepository
-                    .create(user)
+                    .createUser(user)
                     .map(UserMapper::toResponseDTO)
                     .orElseThrow(() -> new IllegalStateException("Failed to persist user"));
         } catch (EntityExistsException e) {
-            throw new DuplicateObjectException("User with email " + user.email() + " already exists", e);
+            throw new DuplicateObjectException("User with email " + user.getEmail() + " already exists", e);
         } catch (PersistenceException e) {
             throw new DatabaseOperationException("Database error occurred while creating user", e);
         } catch (Exception e) {
@@ -50,14 +43,15 @@ public class UserService {
 
     }
 
-    public Optional<UserResponseDTO> createAdmin() {
-        return this.userRepository.createAdmin().map(UserMapper::toResponseDTO);
+    public void createAdmin() {
+        UserDTO admin = new UserDTO("admin", "admin@email.com", "admin");
+        this.createUser(admin);
     }
 
     public UserResponseDTO updateUser(Long id, UserDTO user) {
         try {
             return userRepository
-                    .update(id, user)
+                    .updateUser(id, user)
                     .map(UserMapper::toResponseDTO)
                     .orElseThrow(() -> new IllegalStateException("Failed to merge user"));
         } catch (EntityNotFoundException e) {
@@ -69,9 +63,9 @@ public class UserService {
         }
     }
 
-    public UserResponseDTO partialUserUpdate(Long id, Map<String, String> fieldStringMap) {
+    public UserResponseDTO partialUserUpdate(Long id, Map<String, Object> fieldStringMap) {
         try {
-            return userRepository.partialUpdate(id, fieldStringMap)
+            return userRepository.partialUpdateUser(id, fieldStringMap)
                     .map(UserMapper::toResponseDTO)
                     .orElseThrow(() -> new IllegalStateException("Failed to merge user"));
         } catch (PersistenceException e) {
@@ -106,4 +100,9 @@ public class UserService {
                 .map(UserMapper::toResponseDTO)
                 .orElseThrow(() -> new ObjectNotFoundException("User does not exist with " + fieldName + " " + value));
     }
+
+//    private setPasswordForNewUser(Long id) {
+//
+//    }
+
 }

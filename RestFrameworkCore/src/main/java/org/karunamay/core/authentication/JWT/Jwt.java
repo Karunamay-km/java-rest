@@ -14,6 +14,7 @@ import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class Jwt {
             return Jwts.builder()
                     .issuer(issuer)
                     .audience().add(audience).and()
-                    .expiration(accessTokenExpiration)
+                    .expiration(Date.from(accessTokenExpiration.atZone(ZoneId.systemDefault()).toInstant()))
                     .issuedAt(issuedAt)
                     .claims(claims)
                     .header().add(headers).and()
@@ -84,7 +85,7 @@ public class Jwt {
             return Jwts.builder()
                     .issuer(issuer)
                     .audience().add(audience).and()
-                    .expiration(refreshTokenExpiration)
+                    .expiration(Date.from(accessTokenExpiration.atZone(ZoneId.systemDefault()).toInstant()))
                     .issuedAt(issuedAt)
                     .claims(claims)
                     .header().add(headers).and()

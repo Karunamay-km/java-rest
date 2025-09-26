@@ -3,6 +3,9 @@ package org.karunamay.core.authentication.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 @Entity
 @Table(name = "UserTable")
 public class UserModel extends AbstractBaseUserModel {
@@ -30,4 +33,5 @@ public class UserModel extends AbstractBaseUserModel {
     public boolean isPasswordMatched(String password) {
         return this.matchPassword(password);
     }
+
 }

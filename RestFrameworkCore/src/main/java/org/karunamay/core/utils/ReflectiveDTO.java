@@ -1,8 +1,7 @@
 package org.karunamay.core.utils;
 
 import java.lang.reflect.Field;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ReflectiveDTO {
 
@@ -25,4 +24,23 @@ public class ReflectiveDTO {
         }
         return data;
     }
+
+
+    public static Map<String, Field> getAllFields(Class<?> clazz) {
+        Map<String, Field> fields = new HashMap<>();
+        Class<?> currentClazz = clazz;
+
+        while (currentClazz != null && currentClazz != Object.class) {
+            Field[] declearedField = currentClazz.getDeclaredFields();
+            for (Field field : declearedField) {
+                field.setAccessible(true);
+                fields.put(field.getName(), field);
+            }
+
+            currentClazz = currentClazz.getSuperclass();
+        }
+
+        return fields;
+    }
+
 }
