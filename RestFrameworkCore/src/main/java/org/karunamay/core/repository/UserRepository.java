@@ -1,7 +1,7 @@
-package org.karunamay.core.authentication;
+package org.karunamay.core.repository;
 
 import org.karunamay.core.api.dto.UserDTO;
-import org.karunamay.core.authentication.model.UserModel;
+import org.karunamay.core.model.UserModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,13 +1,10 @@
-package org.karunamay.core.authentication.model;
+package org.karunamay.core.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
 @Entity
-@Table(name = "UserTable")
+@Table(name = "User")
 public class UserModel extends AbstractBaseUserModel {
 
     public UserModel() {

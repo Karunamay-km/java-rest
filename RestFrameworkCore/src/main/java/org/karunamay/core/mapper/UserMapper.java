@@ -1,8 +1,8 @@
-package org.karunamay.core.authentication;
+package org.karunamay.core.mapper;
 
 import org.karunamay.core.api.dto.UserDTO;
 import org.karunamay.core.api.dto.UserResponseDTO;
-import org.karunamay.core.authentication.model.UserModel;
+import org.karunamay.core.model.UserModel;
 
 public class UserMapper {
     public static UserResponseDTO toResponseDTO(UserModel user) {
@@ -17,6 +17,6 @@ public class UserMapper {
     }
 
     public static UserDTO toDTO(UserModel user) {
-        return new UserDTO(user.getUsername(), user.getPassword(), user.getEmail());
+        return new UserDTO(user.getUsername(), user.getPassword(), user.getEmail(), user.getRole());
     }
 }

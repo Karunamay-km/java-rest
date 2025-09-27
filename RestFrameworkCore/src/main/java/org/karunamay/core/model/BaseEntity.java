@@ -1,4 +1,4 @@
-package org.karunamay.core.authentication.model;
+package org.karunamay.core.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
-public abstract class BaseEntity {
+abstract class BaseEntity {
 
 
     @Column(name = "created_at", updatable = false, nullable = false)

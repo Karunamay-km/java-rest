@@ -1,11 +1,11 @@
-package org.karunamay.core.authentication;
+package org.karunamay.core.mapper;
 
 import org.karunamay.core.api.dto.RoleResponseDTO;
-import org.karunamay.core.authentication.model.UserRoleModel;
+import org.karunamay.core.model.RoleModel;
 
 public class RoleMapper {
 
-    public static RoleResponseDTO toRoleResponseDTO(UserRoleModel role) {
+    public static RoleResponseDTO toResponseDTO(RoleModel role) {
         return RoleResponseDTO.builder()
                 .id(role.getId())
                 .role(role.getRole())

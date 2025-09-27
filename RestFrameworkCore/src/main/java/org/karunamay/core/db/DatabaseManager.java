@@ -59,8 +59,11 @@ public class DatabaseManager {
     }
 
     public static <T> Optional<T> executeRead(Function<EntityManager, Optional<T>> action) {
-        try (EntityManager em = getEntityManager()) {
+        EntityManager em = getEntityManager();
+        try {
             return action.apply(em);
+        } finally {
+            em.close();
         }
     }
 }

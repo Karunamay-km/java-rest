@@ -10,6 +10,7 @@ module org.karunamay.core {
     requires com.fasterxml.jackson.annotation;
     requires static lombok;
     requires jdk.jdi;
+    requires java.management;
 
     exports org.karunamay.core.api.http;
     exports org.karunamay.core.api.controller;
@@ -19,14 +20,16 @@ module org.karunamay.core {
     exports org.karunamay.core.api.middleware;
     exports org.karunamay.core.api.dto;
     exports org.karunamay.core.api;
-    exports org.karunamay.core.authentication.model;
-    exports org.karunamay.core.authentication;
+    exports org.karunamay.core.model;
+    exports org.karunamay.core.api.router.Annotation;
+    exports org.karunamay.core.api.service;
+    exports org.karunamay.core.mapper;
+    exports org.karunamay.core.repository;
 
     uses org.karunamay.core.api.router.RouterConfig;
 
-    opens org.karunamay.core.authentication.model to org.hibernate.orm.core;
-    exports org.karunamay.core.api.router.Annotation;
-    opens org.karunamay.core.authentication to org.hibernate.orm.core;
-    exports org.karunamay.core.api.service;
+    opens org.karunamay.core.model to org.hibernate.orm.core;
     opens org.karunamay.core.api.service to org.hibernate.orm.core;
+    opens org.karunamay.core.repository to org.hibernate.orm.core;
+    opens org.karunamay.core.mapper to org.hibernate.orm.core;
 }

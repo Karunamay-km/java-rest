@@ -1,14 +1,14 @@
-package org.karunamay.core.authentication.model;
+package org.karunamay.core.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import org.karunamay.core.security.PasswordHasher;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 
 @Getter
@@ -35,13 +35,21 @@ abstract class AbstractBaseUserModel extends BaseEntity {
     @Column(updatable = false)
     private Instant lastLogin;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "role_id",
+            foreignKey = @ForeignKey(name = "fk_user_role"),
+            referencedColumnName = "ID"
+    )
+    private RoleModel role;
+
     protected AbstractBaseUserModel(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
     }
 
-    protected String hashPassword() {
+    protected String getHashPassword() {
         return PasswordHasher.hash(this.getPassword());
     }
 

@@ -14,6 +14,9 @@
       <assistant-state connection-id="ed92601a-4cb7-4498-8e87-3519cf2b0ec0" default-profile-name="" selected-conversation-id="" assistant-type="GENERIC" availability="UNAVAILABLE" acknowledgement="NONE">
         <conversations />
       </assistant-state>
+      <assistant-state connection-id="f3b11e01-15ce-4b13-8901-1db63af84370" default-profile-name="" selected-conversation-id="" assistant-type="GENERIC" availability="UNAVAILABLE" acknowledgement="NONE">
+        <conversations />
+      </assistant-state>
       <assistant-state connection-id="502cfd0c-104a-4362-81dc-44d187d26e8f" default-profile-name="" selected-conversation-id="" assistant-type="GENERIC" availability="UNAVAILABLE" acknowledgement="NONE">
         <conversations />
       </assistant-state>
@@ -29,22 +32,42 @@
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="502cfd0c-104a-4362-81dc-44d187d26e8f">
-      <console name="sqlite" type="STANDARD" schema="main" session="Main"><![CDATA[select * from "UserTable";
---delete from "UserTable" where username="admin";]]></console>
+    <connection id="f3b11e01-15ce-4b13-8901-1db63af84370">
+      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[select
+    u."created_at",
+    u."email",
+    u."ID",
+    u."lastLogin",
+    u."password",
+    u."role_id",
+    u."updated_at",
+    u."username"
+from
+    "User" u;
+
+
+delete from Role;
+
+
+select * from Role;
+
+select * from User;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="f3b11e01-15ce-4b13-8901-1db63af84370" object-ref="consoles/Connection" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="502cfd0c-104a-4362-81dc-44d187d26e8f" />
+    <connection id="f3b11e01-15ce-4b13-8901-1db63af84370" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="502cfd0c-104a-4362-81dc-44d187d26e8f" dataset="main.UserTable" active-filter-id="" />
+    <filter-actions connection-id="f3b11e01-15ce-4b13-8901-1db63af84370" dataset="main.User" active-filter-id="" />
+    <filter-actions connection-id="f3b11e01-15ce-4b13-8901-1db63af84370" dataset="main.Role" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
@@ -68,9 +91,9 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection source-id="" id="502cfd0c-104a-4362-81dc-44d187d26e8f" active="true" signed="true">
+      <connection source-id="" id="f3b11e01-15ce-4b13-8901-1db63af84370" active="true" signed="true">
         <database>
-          <name value="sqlite" />
+          <name value="Connection" />
           <description value="" />
           <database-type value="SQLITE" />
           <config-type value="BASIC" />

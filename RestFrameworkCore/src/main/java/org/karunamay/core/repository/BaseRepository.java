@@ -1,33 +1,100 @@
-package org.karunamay.core.authentication;
+package org.karunamay.core.repository;
 
-import org.karunamay.core.authentication.model.ModelRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Table;
+import jakarta.persistence.TypedQuery;
 import org.karunamay.core.db.DatabaseManager;
 import org.karunamay.core.utils.ReflectiveDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class BaseRepository<T> {
+abstract class BaseRepository<T> {
 
-    protected ModelRepository<T> modelRepository;
+    private static final Logger logger = LoggerFactory.getLogger(BaseRepository.class);
+
     protected Class<T> modelClass;
     protected Map<String, Field> fieldCache;
 
     public BaseRepository(Class<T> modelClass) {
         this.modelClass = modelClass;
-        this.modelRepository = new ModelRepository<>(modelClass);
         this.fieldCache = ReflectiveDTO.getAllFields(modelClass);
     }
 
+    public boolean isObjectExistsById(Long id) {
+        return this.getById(id).isPresent();
+    }
+
+    public boolean isObjectExistsByField(String username) {
+        return this.getByField("username", username).isPresent();
+    }
+
+    public Optional<List<T>> getAll() {
+        try {
+            return DatabaseManager
+                    .executeRead(
+                            em -> Optional.ofNullable(em.createQuery(
+                                    "SELECT r FROM " + modelClass.getSimpleName() + " r",
+                                    modelClass
+                            ).getResultList())
+                    );
+        } catch (Exception e) {
+            logger.error("Error while fetching model collection");
+            throw e;
+        }
+    }
+
     public Optional<T> getById(Long id) {
-        return modelRepository.findById(id);
+        try {
+            Optional<T> obj = DatabaseManager
+                    .executeRead(
+                            em -> Optional.ofNullable(em.find(modelClass, id))
+                    );
+            if (obj.isEmpty()) {
+                throw new EntityNotFoundException("entity of " + modelClass.getSimpleName() + " with id " + id + " not found");
+            }
+            return obj;
+        } catch (Exception e) {
+            logger.error("Error while fetching model {} with id {} : {}",
+                    modelClass.getSimpleName(), id, e.getMessage(), e);
+            throw e;
+        }
     }
 
     public Optional<T> getByField(String fieldName, String value) {
-        return modelRepository.findByField(fieldName, value);
+        try {
+
+            StringBuilder queryString = new StringBuilder();
+
+            queryString.append("SELECT u FROM ");
+            queryString.append(modelClass.getSimpleName());
+            queryString.append(String.format(" u WHERE u.%s = :%s", fieldName, fieldName));
+
+            Optional<T> obj = DatabaseManager.executeRead(
+                    em -> {
+                        List<T> resultList = em.createQuery(queryString.toString(), modelClass)
+                                .setParameter(fieldName, value)
+                                .getResultList();
+                        return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.get(0));
+                    }
+            );
+//            if (obj.isEmpty()) {
+//                throw new EntityNotFoundException(
+//                        "entity of " + modelClass.getSimpleName() + " with field " + fieldName + " not found");
+//            }
+            return obj;
+        } catch (Exception e) {
+            logger.error("Error while fetching model {} with id {} : {}",
+                    modelClass.getSimpleName(), value, e.getMessage(), e);
+            throw e;
+        }
     }
 
     public <D> Optional<T> create(D dto) {
@@ -69,6 +136,15 @@ public abstract class BaseRepository<T> {
                         "Failed to createUser model " + this.modelClass.getSimpleName() + " instance", e);
             }
         });
+    }
+
+    public <D> Optional<List<T>> bulkCreate(List<D> dtoList) {
+        List<T> collection = new ArrayList<>();
+        for (D dto : dtoList) {
+            Optional<T> obj = this.create(dto);
+            collection.add(obj.get());
+        }
+        return Optional.of(collection);
     }
 
     public <D> Optional<T> update(Long id, D dto) {

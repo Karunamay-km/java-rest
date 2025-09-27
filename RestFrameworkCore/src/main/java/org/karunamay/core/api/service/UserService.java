@@ -3,11 +3,13 @@ package org.karunamay.core.api.service;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
+import org.karunamay.core.api.Model.Role;
 import org.karunamay.core.api.dto.UserDTO;
 import org.karunamay.core.api.dto.UserResponseDTO;
-import org.karunamay.core.authentication.UserMapper;
-import org.karunamay.core.authentication.UserRepository;
-import org.karunamay.core.authentication.model.UserModel;
+import org.karunamay.core.mapper.UserMapper;
+import org.karunamay.core.model.RoleModel;
+import org.karunamay.core.repository.UserRepository;
+import org.karunamay.core.model.UserModel;
 import org.karunamay.core.exception.DatabaseOperationException;
 import org.karunamay.core.exception.DuplicateObjectException;
 import org.karunamay.core.exception.ObjectNotFoundException;
@@ -17,13 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository = new UserRepository();
+    private final RoleService roleService = new RoleService();
 
     public UserResponseDTO createUser(UserDTO user) {
         try {
@@ -44,8 +46,15 @@ public class UserService {
     }
 
     public void createAdmin() {
-        UserDTO admin = new UserDTO("admin", "admin@email.com", "admin");
-        this.createUser(admin);
+        if (!this.userRepository.isObjectExistsByField("admin")) {
+            RoleModel role = this.roleService.getRoleEntityByField("role", Role.ADMIN.getName());
+            UserDTO admin = new UserDTO(
+                    "admin",
+                    "admin@email.com",
+                    "admin",
+                    role);
+            this.createUser(admin);
+        }
     }
 
     public UserResponseDTO updateUser(Long id, UserDTO user) {
@@ -100,9 +109,5 @@ public class UserService {
                 .map(UserMapper::toResponseDTO)
                 .orElseThrow(() -> new ObjectNotFoundException("User does not exist with " + fieldName + " " + value));
     }
-
-//    private setPasswordForNewUser(Long id) {
-//
-//    }
 
 }

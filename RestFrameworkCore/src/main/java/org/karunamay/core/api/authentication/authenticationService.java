@@ -5,8 +5,8 @@ import org.karunamay.core.api.dto.UserLoginResponseDTO;
 import org.karunamay.core.api.dto.UserResponseDTO;
 import org.karunamay.core.api.service.UserService;
 import org.karunamay.core.authentication.JWT.Jwt;
-import org.karunamay.core.authentication.UserRepository;
-import org.karunamay.core.authentication.model.UserModel;
+import org.karunamay.core.repository.UserRepository;
+import org.karunamay.core.model.UserModel;
 import org.karunamay.core.exception.InvalidCredentialsException;
 import org.karunamay.core.http.RestHttpResponse;
 
