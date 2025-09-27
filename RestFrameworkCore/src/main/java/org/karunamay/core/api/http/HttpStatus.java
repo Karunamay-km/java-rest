@@ -6,6 +6,7 @@ public enum HttpStatus {
     HTTP_BAD_REQUEST(400, "Bad Request"),
     HTTP_SERVER_ERROR(500, "Server Error"),
     HTTP_AUTHENTICATION_SUCCESS(204, "Authentication Success"),
+    HTTP_UNAUTHORIZE_ACCESS(401, "Unauthorize Access"),
     HTTP_CREATE(201, "Created");
 
     final int code;

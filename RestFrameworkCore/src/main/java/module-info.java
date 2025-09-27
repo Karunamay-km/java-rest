@@ -19,6 +19,7 @@ module org.karunamay.core {
     exports org.karunamay.core.api.config;
     exports org.karunamay.core.api.middleware;
     exports org.karunamay.core.api.dto;
+    exports org.karunamay.core.api.model;
     exports org.karunamay.core.api;
     exports org.karunamay.core.model;
     exports org.karunamay.core.api.router.Annotation;

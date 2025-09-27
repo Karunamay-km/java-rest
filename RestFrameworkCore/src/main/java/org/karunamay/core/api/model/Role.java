@@ -1,8 +1,5 @@
-package org.karunamay.core.api.Model;
+package org.karunamay.core.api.model;
 
-import lombok.Getter;
-
-@Getter
 public enum Role {
     ADMIN(0, "admin"),
     STAFF(1, "staff");
@@ -13,5 +10,13 @@ public enum Role {
     Role(int privilege, String name) {
         this.privilege = privilege;
         this.name = name;
+    }
+
+    public int getPrivilege() {
+        return privilege;
+    }
+
+    public String getName() {
+        return name;
     }
 }

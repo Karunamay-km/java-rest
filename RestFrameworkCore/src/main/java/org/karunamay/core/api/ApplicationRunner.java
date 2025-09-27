@@ -1,6 +1,6 @@
 package org.karunamay.core.api;
 
-import org.karunamay.core.api.Model.Role;
+import org.karunamay.core.api.model.Role;
 import org.karunamay.core.api.config.ConfigManager;
 import org.karunamay.core.api.dto.RoleCreateDTO;
 import org.karunamay.core.api.service.RoleService;
@@ -38,6 +38,8 @@ public class ApplicationRunner {
             initializeDefaultRoles();
             RouteRegistryImpl.configureRoutes();
             this.userService.createAdmin();
+
+            System.out.println("Routes: " + RouteRegistryImpl.getInstance().getRoutes());
 
             Jwt.generateKeys();
             LOGGER.info("Default superuser created with username 'admin' and password 'admin'");

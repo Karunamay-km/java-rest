@@ -3,7 +3,7 @@ package org.karunamay.core.api.service;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
-import org.karunamay.core.api.Model.Role;
+import org.karunamay.core.api.model.Role;
 import org.karunamay.core.api.dto.UserDTO;
 import org.karunamay.core.api.dto.UserResponseDTO;
 import org.karunamay.core.mapper.UserMapper;

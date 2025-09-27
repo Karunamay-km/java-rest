@@ -38,7 +38,8 @@ public class MiddlewareHandler {
                 null
         );
         try {
-            HttpResponseWriter.sendServerError(context, httpErrorResponse);
+            HttpResponseWriter.send(httpErrorResponse, HttpStatus.HTTP_SERVER_ERROR, context);
+//            HttpResponseWriter.sendServerError(context, httpErrorResponse);
         } catch (Exception e) {
             throw new HttpResponseException(e.getMessage());
         }

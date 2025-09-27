@@ -47,12 +47,6 @@ public class RouteRegistryImpl implements RouteRegistry {
         RouteComponent<T> routeComponent = this.routes.get(route) == null
                 ? requestPathToRawPathMapper()
                 : (RouteComponent<T>) this.routes.get(route);
-//        if (this.routes.get(route) == null) {
-//            return requestPathToRawPathMapper();
-//        }
-//        return (RouteComponent<T>) this.routes.get(route);
-//        System.out.println("route component: " + routeComponent.getRawPath());
-//        this.parsePathParameters(routeComponent);
         return routeComponent;
     }
 
@@ -84,7 +78,6 @@ public class RouteRegistryImpl implements RouteRegistry {
     }
 
     public static void configureRoutes() {
-//        httpRequest.set(request);
         ServiceLoader<RouterConfig> loader = ServiceLoader.load(RouterConfig.class);
         for (RouterConfig config : loader) {
             config.configure(INSTANCE);
@@ -101,13 +94,11 @@ public class RouteRegistryImpl implements RouteRegistry {
     }
 
     private <T extends RestControllerConfig> void register(RouteComponent<T> route) {
-//        this.parsePathParameters(route);
         this.routes.put(route.getRawPath(), route);
         routesNameMapper.put(route.getName(), route.getRawPath());
     }
 
     private <T extends RestControllerConfig> void register(String modifiedPath, RouteComponent<T> route) {
-//        this.parsePathParameters(route);
         this.routes.put(modifiedPath, route);
         routesNameMapper.put(route.getName(), modifiedPath);
     }
@@ -135,20 +126,12 @@ public class RouteRegistryImpl implements RouteRegistry {
                             break;
                         }
                     }
-
-
-
-//                    if ((rawPathComponent[i].equals(requestPathComponent[i]))
-//                            || !(rawPathComponent[i].equals(requestPathComponent[i]) && rawPathComponent[i].startsWith(":"))) {
                         if (i == requestPathComponent.length - 1) {
                             routeName.add(rName);
                         }
-//                    }
                 }
-//                routeName.add(rName);
             }
         });
-        System.out.println(routeName);
         if (!routeName.isEmpty()) {
             return (RouteComponent<T>) this.routes.get(routeName.get(0));
         }

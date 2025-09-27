@@ -32,6 +32,8 @@ public class authenticationService {
             throw new InvalidCredentialsException("Password didn't matched");
 
         }
+
+        jwt.setClaims(Map.of("user", user));
         String accessToken = jwt.createJwt();
         String refreshToken = jwt.createRefreshToken();
         return new UserLoginResponseDTO(

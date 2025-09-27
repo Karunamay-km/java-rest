@@ -10,10 +10,11 @@ public class ReflectiveDTO {
         if (object == null) return null;
 
         Map<String, Object> data = new LinkedHashMap<>();
-        Class<?> cls = object.getClass();
+        Class<?> clazz = object.getClass();
 
-        for (Field field : cls.getDeclaredFields()) {
+        for (Map.Entry<String, Field> entry : getAllFields(clazz).entrySet()) {
             try {
+                Field field = entry.getValue();
                 field.setAccessible(true);
                 Object value = field.get(object);
                 data.put(field.getName(), value);

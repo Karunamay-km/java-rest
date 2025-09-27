@@ -5,7 +5,7 @@ import org.karunamay.core.api.controller.RestControllerConfig;
 import org.karunamay.core.api.http.ApplicationContext;
 import org.karunamay.core.api.http.HttpRequest;
 import org.karunamay.core.api.router.RouteComponent;
-import org.karunamay.core.api.router.RouteRegistry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +19,12 @@ public class HttpRequestDispatcher {
             RouteRegistryImpl.setHttpRequest(applicationContext.getRequest());
             RouteComponent<RestControllerConfig> route = RouteRegistryImpl.getInstance().getRoute(request.getPath());
             if (route == null) HttpError.notFound404(applicationContext);
-            if (route != null) {
+            else {
                 applicationContext.setPathParameter(route.getPathParameters());
                 Class<?> cls = route.getController();
                 if (RestControllerConfig.class.isAssignableFrom(cls)) {
-                    RestControllerConfig dispatcherClass = (RestControllerConfig) cls.getDeclaredConstructor().newInstance();
+                    RestControllerConfig dispatcherClass =
+                            (RestControllerConfig) cls.getDeclaredConstructor().newInstance();
                     switch (request.getMethod()) {
                         case POST -> dispatcherClass.post(applicationContext);
                         case PUT -> dispatcherClass.put(applicationContext);
@@ -33,7 +34,8 @@ public class HttpRequestDispatcher {
                     }
                 } else {
                     throw new IllegalStateException(
-                            String.format("class %s must implements the RestControllerConfig interface.", cls.getName())
+                            String.format("class %s must implements the RestControllerConfig interface.",
+                                    cls.getName())
                     );
                 }
             }

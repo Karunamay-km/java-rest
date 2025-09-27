@@ -29,7 +29,7 @@ public class RoleModel extends BaseEntity {
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private Set<UserModel> userModelSet;
 
-    @Column(name="privilege", nullable = false)
+    @Column(name="privilege_level", nullable = false)
     @Setter(AccessLevel.PROTECTED)
     private Integer privilege;
 

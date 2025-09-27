@@ -36,6 +36,11 @@ public class Jwt {
     private final String issuer = "core-api";
     private final String audience = "client";
 
+    @Getter
+    @Setter
+    private String subject;
+
+
 
     public static void generateKeys() {
         File pvtKey = new File("keys/private_key.pem");
@@ -71,6 +76,7 @@ public class Jwt {
                     .audience().add(audience).and()
                     .expiration(Date.from(accessTokenExpiration.atZone(ZoneId.systemDefault()).toInstant()))
                     .issuedAt(issuedAt)
+                    .subject(subject)
                     .claims(claims)
                     .header().add(headers).and()
                     .signWith(KeyLoader.loadPrivateKey())
