@@ -4,10 +4,10 @@ import org.karunamay.core.api.controller.RestControllerConfig;
 
 import java.util.Map;
 
-public interface RouteComponent<T extends RestControllerConfig> {
+public interface RouteComponent {
     String getRawPath();
 
-    Class<T> getController();
+    Class<? extends RestControllerConfig> getController();
 
     String getName();
 
@@ -16,4 +16,6 @@ public interface RouteComponent<T extends RestControllerConfig> {
     void setRawPath(String path);
 
     void setPathParameters(String path, PathParameter pathParameter);
+
+    Boolean isPublicRoute();
 }

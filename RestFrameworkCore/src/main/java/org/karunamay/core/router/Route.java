@@ -7,19 +7,25 @@ import org.karunamay.core.api.router.RouteComponent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Route<T extends RestControllerConfig> implements RouteComponent<T> {
+public class Route implements RouteComponent {
 
     private String rawPath;
-    private final Class<T> controller;
-    //    private final AbstractPathParams params = new PathParams();
+    private final Class<? extends RestControllerConfig> controller;
     private final String name;
+    private Boolean isPublicRoute = false;
     private final Map<String, PathParameter> pathParameters = new HashMap<>();
-//    private boolean hasPathParameters = false;
 
-    public Route(String rawPath, Class<T> controller, String name) {
+    public Route(String rawPath, Class<? extends RestControllerConfig> controller, String name) {
         this.rawPath = rawPath;
         this.controller = controller;
         this.name = name;
+    }
+
+    public Route(String rawPath, Class<? extends RestControllerConfig> controller, String name, Boolean isPublicRoute) {
+        this.rawPath = rawPath;
+        this.controller = controller;
+        this.name = name;
+        this.isPublicRoute = isPublicRoute;
     }
 
     @Override
@@ -28,7 +34,7 @@ public class Route<T extends RestControllerConfig> implements RouteComponent<T> 
     }
 
     @Override
-    public Class<T> getController() {
+    public Class<? extends RestControllerConfig> getController() {
         return this.controller;
     }
 
@@ -52,4 +58,8 @@ public class Route<T extends RestControllerConfig> implements RouteComponent<T> 
         this.pathParameters.put(path, pathParameter);
     }
 
+    @Override
+    public Boolean isPublicRoute() {
+        return this.isPublicRoute;
+    }
 }

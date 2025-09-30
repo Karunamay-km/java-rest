@@ -36,7 +36,7 @@ public class ApplicationRunner {
         try {
 
             initializeDefaultRoles();
-            RouteRegistryImpl.configureRoutes();
+            RouteRegistryImpl.getInstance().configureRoutes();
             this.userService.createAdmin();
 
             System.out.println("Routes: " + RouteRegistryImpl.getInstance().getRoutes());

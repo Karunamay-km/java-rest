@@ -2,8 +2,15 @@ package org.karunamay.core.internal;
 
 import org.karunamay.core.Error.HttpError;
 import org.karunamay.core.api.config.ConfigManager;
+import org.karunamay.core.api.controller.RestControllerConfig;
 import org.karunamay.core.api.http.ApplicationContext;
 import org.karunamay.core.api.http.HttpRequest;
+import org.karunamay.core.api.http.HttpResponseWriter;
+import org.karunamay.core.api.http.HttpStatus;
+import org.karunamay.core.api.router.RouteComponent;
+import org.karunamay.core.api.router.RouteResolver;
+import org.karunamay.core.exception.ResponseSentException;
+import org.karunamay.core.http.HttpErrorResponse;
 import org.karunamay.core.middleware.AuthenticationMiddleware;
 import org.karunamay.core.middleware.MiddlewareHandler;
 
@@ -42,8 +49,8 @@ class ConnectionHandler implements Runnable {
             while (true) {
                 HttpRequest httpRequest = HttpRequestParser.parse(inputStream);
 
-
                 ApplicationContext context = new ApplicationContextImpl();
+                RouteResolver routeResolver = new RouteResolver(context);
                 context.setOutputStream(outputStream);
 
                 if (httpRequest == null) {
@@ -59,13 +66,22 @@ class ConnectionHandler implements Runnable {
                     context.setRequestMiddlewares(ConfigManager.getInstance().getRequestMiddlewares());
                     context.setResponseMiddlewares(ConfigManager.getInstance().getResponseMiddlewares());
 
-                    boolean continueChain = MiddlewareHandler.executePipeline(context, context.getRequestMiddlewares());
+                    RouteComponent route = routeResolver.resolve(context.getHttpRequest().getPath());
+                    context.setRoute(route);
 
+                    boolean continueChain = MiddlewareHandler.executePipeline(context, context.getRequestMiddlewares());
 
                     if (!continueChain && !context.isResponseWritten()) {
                         MiddlewareHandler.terminateExecution(context);
                     }
-                    if (continueChain) HttpRequestDispatcher.dispatch(context);
+                    if (continueChain) {
+                        try {
+                            HttpRequestDispatcher.dispatch(context);
+                        } catch (ResponseSentException e) {
+                            logger.info(e.getMessage());
+                            // Response already sent do nothing.
+                        }
+                    }
 
                     Optional<String> connectionHeader = httpRequest.getHeaders().get("Connection");
                     if (connectionHeader.isPresent() && connectionHeader.get().equals("close")) {

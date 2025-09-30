@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.karunamay.core.api.http.*;
+import org.karunamay.core.exception.ResponseSentException;
 import org.karunamay.core.middleware.MiddlewareHandler;
 import org.karunamay.core.utils.ReflectiveDTO;
 
@@ -25,7 +26,7 @@ public abstract class AbstractHttpResponseWriter {
             header.set("Content-Length", String.valueOf(bytes.length));
 
             HttpResponse response = new HttpResponseBuilder()
-                    .withHttpVersion(context.getRequest().getHttpVersion())
+                    .withHttpVersion(context.getHttpRequest().getHttpVersion())
                     .withStatus(status)
                     .withResponsePhrase(status.getResponsePhrase())
                     .withHeaders(context.getResponseHeader())
@@ -36,6 +37,8 @@ public abstract class AbstractHttpResponseWriter {
             context.getOutputStream().write(bytes);
             context.getOutputStream().flush();
             context.setResponseWritten(true);
+
+            throw new ResponseSentException();
         }
     }
 

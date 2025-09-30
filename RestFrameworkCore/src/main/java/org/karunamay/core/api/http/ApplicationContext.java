@@ -1,8 +1,11 @@
 package org.karunamay.core.api.http;
 
 import org.karunamay.core.api.config.ConfigManager;
+import org.karunamay.core.api.controller.RestControllerConfig;
 import org.karunamay.core.api.router.PathParameter;
 import org.karunamay.core.api.middleware.Middleware;
+import org.karunamay.core.api.router.RouteComponent;
+import org.karunamay.core.router.Route;
 
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -10,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface ApplicationContext {
-
-    HttpRequest getRequest();
 
     void setHttpRequest(HttpRequest httpRequest);
 
@@ -50,4 +51,8 @@ public interface ApplicationContext {
     ConfigManager getConfigManager();
 
     void setConfigManager(ConfigManager configManager);
+
+    RouteComponent getRoute();
+
+    void setRoute(RouteComponent route);
 }

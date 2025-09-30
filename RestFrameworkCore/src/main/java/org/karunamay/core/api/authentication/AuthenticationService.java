@@ -15,7 +15,7 @@ import java.time.format.FormatStyle;
 import java.util.HashMap;
 import java.util.Map;
 
-public class authenticationService {
+public class AuthenticationService {
 
     private final UserService userService = new UserService();
     private final UserRepository userRepository = new UserRepository();

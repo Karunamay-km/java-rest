@@ -23,6 +23,8 @@ class HttpRequestParser {
     private static HttpHeader headers;
     private static HttpQueryParam queryParams;
     private static String httpVersion;
+    private static String body;
+    private static Boolean hasBody;
 
     public static HttpRequest parse(InputStream inputStream) throws Exception {
         BufferedReader bf = getBufferedReader(inputStream);
@@ -33,6 +35,7 @@ class HttpRequestParser {
             headers = headerParser(bf);
             queryParams = queryParamParser(requestLine.getUri());
             httpVersion = requestLine.getHttpVersion();
+            body = bodyParser(bf).toString();
 
             return new HttpRequestBuilder()
                     .withMethod(method)
@@ -40,6 +43,7 @@ class HttpRequestParser {
                     .withHeaders(headers)
                     .withQueryParams(queryParams)
                     .withHttpVersion(httpVersion)
+                    .withBody(body)
                     .build();
         }
 
@@ -83,14 +87,7 @@ class HttpRequestParser {
         private URI uri;
 
         RequestLine(String line) throws URISyntaxException {
-//            System.out.println("line" + line);
             this.line = line;
-//            if (line != null) {
-//                String[] requestLine = line.split(" ");
-//                this.method = requestLine[0];
-//                this.uri = new URI(requestLine[1]);
-//                this.httpVersion = requestLine[2];
-//            };
         }
 
         public RequestLine initRequestLineObject() throws URISyntaxException {
@@ -129,7 +126,19 @@ class HttpRequestParser {
             else
                 throw new BadHttpRequestException("Incorrect HTTP headers format");
         }
+        hasBody = line == null;
         return headers;
+    }
+
+    private static Object bodyParser(BufferedReader bf) throws Exception {
+        String line;
+        StringBuilder bodyString = new StringBuilder();
+        if (hasBody) {
+            while ((line = bf.readLine()) != null && !line.isEmpty()) {
+                bodyString.append(line);
+            }
+        }
+        return bodyString;
     }
 
     private static HttpQueryParam queryParamParser(URI uri) {

@@ -2,12 +2,15 @@ package org.karunamay.core.internal;
 
 
 import org.karunamay.core.api.config.ConfigManager;
+import org.karunamay.core.api.controller.RestControllerConfig;
 import org.karunamay.core.api.http.ApplicationContext;
 import org.karunamay.core.api.http.HttpHeader;
 import org.karunamay.core.api.http.HttpRequest;
 import org.karunamay.core.api.router.PathParameter;
 import org.karunamay.core.api.middleware.Middleware;
+import org.karunamay.core.api.router.RouteComponent;
 import org.karunamay.core.http.HttpHeaderFactory;
+//import org.karunamay.core.router.RouteComponent;
 
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -17,13 +20,12 @@ import java.util.Map;
 
 public class ApplicationContextImpl implements ApplicationContext {
 
-//    private static final ApplicationContextImpl INSTANCE = ne;
-
     private HttpRequest httpRequest;
     private OutputStream outputStream;
     private HttpHeader responseHeader;
     private Map<String, PathParameter> pathParameters;
     private ConfigManager configManager;
+    private RouteComponent route;
     private final LinkedList<Middleware> requestMiddlewares = new LinkedList<>();
     private final LinkedList<Middleware> responseMiddlewares = new LinkedList<>();
     private boolean responseWritten = false;
@@ -43,6 +45,16 @@ public class ApplicationContextImpl implements ApplicationContext {
         this.responseHeader = responseHeader;
         this.pathParameters = pathParameters;
         this.configManager = configManager;
+    }
+
+    @Override
+    public RouteComponent getRoute() {
+        return route;
+    }
+
+    @Override
+    public void setRoute(RouteComponent route) {
+        this.route = route;
     }
 
     @Override
@@ -90,15 +102,6 @@ public class ApplicationContextImpl implements ApplicationContext {
         this.pathParameters = pathParameter;
     }
 
-    @Override
-    public HttpRequest getRequest() {
-        return this.httpRequest;
-    }
-
-    @Override
-    public void setHttpRequest(HttpRequest request) {
-        this.httpRequest = request;
-    }
 
     @Override
     public OutputStream getOutputStream() {
@@ -129,7 +132,12 @@ public class ApplicationContextImpl implements ApplicationContext {
 
     @Override
     public HttpRequest getHttpRequest() {
-        return httpRequest;
+        return this.httpRequest;
+    }
+
+    @Override
+    public void setHttpRequest(HttpRequest request) {
+        this.httpRequest = request;
     }
 
     @Override

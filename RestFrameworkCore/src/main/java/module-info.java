@@ -33,4 +33,7 @@ module org.karunamay.core {
     opens org.karunamay.core.api.service to org.hibernate.orm.core;
     opens org.karunamay.core.repository to org.hibernate.orm.core;
     opens org.karunamay.core.mapper to org.hibernate.orm.core;
+
+    provides org.karunamay.core.api.router.RouterConfig
+            with org.karunamay.core.routes.Authentication;
 }

@@ -5,9 +5,18 @@ import org.karunamay.core.api.http.ApplicationContext;
 
 public interface RestControllerConfig {
 
-    void get(ApplicationContext context);
-    void post(ApplicationContext httpContext);
-    void put(ApplicationContext httpContext);
-    void patch(ApplicationContext httpContext);
-    void delete(ApplicationContext httpContext);
+    default void get(ApplicationContext context) {
+    }
+
+    default void post(ApplicationContext httpContext) {
+    }
+
+    default void put(ApplicationContext httpContext) {
+    }
+
+    default void patch(ApplicationContext httpContext) {
+    }
+
+    default void delete(ApplicationContext httpContext) {
+    }
 }
