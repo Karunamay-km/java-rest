@@ -8,4 +8,6 @@ public interface HttpRequest {
     String getHttpVersion();
 
     String getBody();
+
+    <T> T parseBody(Class<T> clazz);
 }

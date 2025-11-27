@@ -36,6 +36,28 @@ public class PasswordHasher {
         }
     }
 
+    public static boolean verify(String storedPassword, String password) {
+        try {
+            String[] parts = storedPassword.split("\\$");
+            String algorithm = parts[0];
+            int iterationCount = Integer.parseInt(parts[1]);
+            byte[] salt = Base64.getDecoder().decode(parts[2]);
+            String expectedHash = parts[3];
+
+            PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterationCount, keyLength);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance(algorithm);
+            byte[] hash = factory.generateSecret(spec).getEncoded();
+            String hashedRawPassword = Base64.getEncoder().encodeToString(hash);
+
+            return expectedHash.equals(hashedRawPassword);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
     private static String passwordFormat(String salt, String hash) {
         return String.format("%s$%s$%s$%s", PasswordHasher.algorithm, PasswordHasher.iterationCount, salt, hash);
     }

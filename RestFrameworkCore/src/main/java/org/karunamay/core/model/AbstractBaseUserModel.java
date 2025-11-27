@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import org.karunamay.core.security.PasswordHasher;
-
 import java.time.Instant;
-
 
 @Getter
 @MappedSuperclass
@@ -47,18 +44,5 @@ abstract class AbstractBaseUserModel extends BaseEntity {
         this.username = username;
         this.password = password;
         this.email = email;
-    }
-
-    protected String getHashPassword() {
-        return PasswordHasher.hash(this.getPassword());
-    }
-
-    protected boolean matchPassword(String password) {
-        return this.getPassword().equals(PasswordHasher.hash(password));
-    }
-
-    protected void changePassword(String password) {
-        this.setPassword(PasswordHasher.hash(password));
-
     }
 }

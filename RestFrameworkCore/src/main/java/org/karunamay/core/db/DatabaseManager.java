@@ -1,7 +1,6 @@
 package org.karunamay.core.db;
 
 import jakarta.persistence.*;
-import org.hibernate.ObjectNotFoundException;
 import org.karunamay.core.exception.DatabaseOperationException;
 
 import java.util.Optional;

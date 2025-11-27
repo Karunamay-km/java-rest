@@ -120,7 +120,7 @@ public class ApplicationContextImpl implements ApplicationContext {
 
     @Override
     public void setResponseHeader(HttpHeader responseHeader) {
-        HttpHeader headers = HttpHeaderFactory.create();
+        HttpHeader headers = new HttpHeaderFactory().getHeaders();
         responseHeader.asMap().forEach(headers::set);
         this.responseHeader = headers;
     }

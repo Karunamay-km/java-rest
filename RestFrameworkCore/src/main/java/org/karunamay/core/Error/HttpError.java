@@ -15,18 +15,60 @@ public class HttpError {
         HttpResponseWriter.send(httpErrorResponse, HttpStatus.HTTP_NOT_FOUND, context);
     }
 
+    public static void objectNotFound404(ApplicationContext context, String message) {
+        HttpErrorResponse<Object> httpErrorResponse = new HttpErrorResponse<>(
+                HttpStatus.HTTP_NOT_FOUND.getCode(),
+                message,
+                null
+        );
+        HttpResponseWriter.send(httpErrorResponse, HttpStatus.HTTP_NOT_FOUND, context);
+    }
+
     public static void unauthorizeAccess401(ApplicationContext context) {
         HttpErrorResponse<Object> httpErrorResponse = new HttpErrorResponse<>(
                 HttpStatus.HTTP_UNAUTHORIZE_ACCESS.getCode(),
                 "Unauthorize Access",
                 null
         );
-        HttpResponseWriter.send(httpErrorResponse, HttpStatus.HTTP_NOT_FOUND, context);
+        HttpResponseWriter.send(httpErrorResponse, HttpStatus.HTTP_UNAUTHORIZE_ACCESS, context);
 
     }
 
-    public static void badRequest400(ApplicationContext context) throws Exception {
-        HttpResponseWriter.badSend(context);
+    public static void unauthorizeAccess401(ApplicationContext context, String message) {
+        HttpErrorResponse<Object> httpErrorResponse = new HttpErrorResponse<>(
+                HttpStatus.HTTP_UNAUTHORIZE_ACCESS.getCode(),
+                message,
+                null
+        );
+        HttpResponseWriter.send(httpErrorResponse, HttpStatus.HTTP_UNAUTHORIZE_ACCESS, context);
+
     }
 
+    public static <T> void unauthorizeAccess401(ApplicationContext context, String message, T details) {
+        HttpErrorResponse<Object> httpErrorResponse = new HttpErrorResponse<>(
+                HttpStatus.HTTP_UNAUTHORIZE_ACCESS.getCode(),
+                message,
+                details
+        );
+        HttpResponseWriter.send(httpErrorResponse, HttpStatus.HTTP_UNAUTHORIZE_ACCESS, context);
+
+    }
+
+    public static void badRequest400(ApplicationContext context) {
+        HttpErrorResponse<Object> httpErrorResponse = new HttpErrorResponse<>(
+                HttpStatus.HTTP_BAD_REQUEST.getCode(),
+                "Bad Request",
+                null
+        );
+        HttpResponseWriter.send(httpErrorResponse, HttpStatus.HTTP_BAD_REQUEST, context);
+    }
+
+    public static void badRequest400(ApplicationContext context, String message) {
+        HttpErrorResponse<Object> httpErrorResponse = new HttpErrorResponse<>(
+                HttpStatus.HTTP_BAD_REQUEST.getCode(),
+                message,
+                null
+        );
+        HttpResponseWriter.send(httpErrorResponse, HttpStatus.HTTP_BAD_REQUEST, context);
+    }
 }

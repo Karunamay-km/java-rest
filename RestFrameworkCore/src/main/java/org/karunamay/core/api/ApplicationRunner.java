@@ -39,8 +39,6 @@ public class ApplicationRunner {
             RouteRegistryImpl.getInstance().configureRoutes();
             this.userService.createAdmin();
 
-            System.out.println("Routes: " + RouteRegistryImpl.getInstance().getRoutes());
-
             Jwt.generateKeys();
             LOGGER.info("Default superuser created with username 'admin' and password 'admin'");
             server.start();

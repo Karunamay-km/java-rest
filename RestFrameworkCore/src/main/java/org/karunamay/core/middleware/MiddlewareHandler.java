@@ -21,7 +21,8 @@ public class MiddlewareHandler {
         return execute(context, middlewares.listIterator());
     }
 
-    private static boolean execute(ApplicationContext applicationContext, Iterator<Middleware> middlewareIterator) {
+    private static boolean execute(ApplicationContext applicationContext,
+                                   Iterator<Middleware> middlewareIterator) {
         if (middlewareIterator.hasNext()) {
             middlewareIterator.next().handle(applicationContext, () -> {
                 execute(applicationContext, middlewareIterator);
