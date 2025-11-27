@@ -1,9 +1,12 @@
 package org.karunamay.core.internal;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.karunamay.core.api.dto.HttpRequestDTO;
 import org.karunamay.core.api.http.HttpHeader;
 import org.karunamay.core.api.http.HttpMethod;
 import org.karunamay.core.api.http.HttpQueryParam;
 import org.karunamay.core.api.http.HttpRequest;
+import org.karunamay.core.utils.JsonParser;
 
 class HttpRequestImpl implements HttpRequest {
 
@@ -58,5 +61,10 @@ class HttpRequestImpl implements HttpRequest {
     @Override
     public String getBody() {
         return body;
+    }
+
+    @Override
+    public <T> T parseBody(Class<T> clazz) {
+        return JsonParser.fromStringToObject(getBody(), clazz);
     }
 }

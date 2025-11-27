@@ -47,10 +47,12 @@ class ConnectionHandler implements Runnable {
             logger.info("Handling client {}", clientSocket.getRemoteSocketAddress());
 
             while (true) {
-                HttpRequest httpRequest = HttpRequestParser.parse(inputStream);
 
+                HttpRequestParser httpRequestParser = new HttpRequestParser();
                 ApplicationContext context = new ApplicationContextImpl();
                 RouteResolver routeResolver = new RouteResolver(context);
+
+                HttpRequest httpRequest = httpRequestParser.parse(inputStream);
                 context.setOutputStream(outputStream);
 
                 if (httpRequest == null) {

@@ -85,10 +85,6 @@ abstract class BaseRepository<T> {
                         return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.get(0));
                     }
             );
-//            if (obj.isEmpty()) {
-//                throw new EntityNotFoundException(
-//                        "entity of " + modelClass.getSimpleName() + " with field " + fieldName + " not found");
-//            }
             return obj;
         } catch (Exception e) {
             logger.error("Error while fetching model {} with id {} : {}",

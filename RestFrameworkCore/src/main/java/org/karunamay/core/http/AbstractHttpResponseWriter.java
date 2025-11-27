@@ -1,12 +1,9 @@
 package org.karunamay.core.http;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.karunamay.core.api.http.*;
 import org.karunamay.core.exception.ResponseSentException;
 import org.karunamay.core.middleware.MiddlewareHandler;
-import org.karunamay.core.utils.ReflectiveDTO;
+import org.karunamay.core.utils.JsonParser;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -17,9 +14,7 @@ public abstract class AbstractHttpResponseWriter {
         if (!continuePipeline) {
             MiddlewareHandler.terminateExecution(context);
         } else {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.setDefaultPropertyInclusion(JsonInclude.Include.USE_DEFAULTS);
-            String bodyJsonString = mapper.writeValueAsString(ReflectiveDTO.createDto(body));
+            String bodyJsonString = JsonParser.fromObjectToString(body);
             byte[] bytes = bodyJsonString.getBytes(StandardCharsets.UTF_8);
 
             HttpHeader header = context.getResponseHeader();
@@ -38,25 +33,8 @@ public abstract class AbstractHttpResponseWriter {
             context.getOutputStream().flush();
             context.setResponseWritten(true);
 
+//          Stop the execution after response has been sent
             throw new ResponseSentException();
         }
     }
-
-    protected static <T> void badResponseSend(ApplicationContext context) throws Exception {
-//        TODO: Refactor as above
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setDefaultPropertyInclusion(JsonInclude.Include.USE_DEFAULTS);
-
-        HttpResponse response = new HttpResponseBuilder()
-                .withHttpVersion("HTTP/1.1")
-                .withStatus(HttpStatus.HTTP_BAD_REQUEST)
-                .withResponsePhrase(HttpStatus.HTTP_BAD_REQUEST.getResponsePhrase())
-                .withHeaders(HttpHeaderFactory.create())
-                .build();
-
-        context.getOutputStream().write(response.toString().getBytes(StandardCharsets.UTF_8));
-        context.getOutputStream().flush();
-        context.setResponseWritten(true);
-    }
-
 }

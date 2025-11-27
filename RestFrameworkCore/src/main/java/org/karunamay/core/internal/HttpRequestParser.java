@@ -1,9 +1,7 @@
 package org.karunamay.core.internal;
 
-import org.karunamay.core.api.http.HttpHeader;
-import org.karunamay.core.api.http.HttpMethod;
-import org.karunamay.core.api.http.HttpQueryParam;
-import org.karunamay.core.api.http.HttpRequest;
+import lombok.Getter;
+import org.karunamay.core.api.http.*;
 import org.karunamay.core.exception.BadHttpRequestException;
 import org.karunamay.core.http.HttpHeaderFactory;
 
@@ -15,18 +13,19 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Getter
 class HttpRequestParser {
 
-    private static HttpMethod method;
-    private static String path;
-    private static HttpHeader headers;
-    private static HttpQueryParam queryParams;
-    private static String httpVersion;
-    private static String body;
-    private static Boolean hasBody;
+    private HttpMethod method;
+    private String path;
+    private HttpHeader headers;
+    private HttpQueryParam queryParams;
+    private String httpVersion;
+    private String body;
 
-    public static HttpRequest parse(InputStream inputStream) throws Exception {
+    public HttpRequest parse(InputStream inputStream) throws Exception {
         BufferedReader bf = getBufferedReader(inputStream);
         RequestLine requestLine = new RequestLine(getRequestLine(bf)).initRequestLineObject();
         if (requestLine != null) {
@@ -50,43 +49,27 @@ class HttpRequestParser {
         return null;
     }
 
-    public HttpMethod getMethod() {
-        return method;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public HttpHeader getHeaders() {
-        return headers;
-    }
-
-    public HttpQueryParam getQueryParams() {
-        return queryParams;
-    }
-
-    public String getHttpVersion() {
-        return httpVersion;
-    }
 
     private static BufferedReader getBufferedReader(InputStream inputStream) {
         return new BufferedReader(new InputStreamReader(inputStream));
     }
 
     private static String getRequestLine(BufferedReader bf) throws IOException {
-        System.out.println(bf.lines().toString());
         return bf.readLine();
     }
+
 
     private static class RequestLine {
 
         private final String line;
+        @Getter
         private String method;
+        @Getter
         private String httpVersion;
+        @Getter
         private URI uri;
 
-        RequestLine(String line) throws URISyntaxException {
+        RequestLine(String line) {
             this.line = line;
         }
 
@@ -101,24 +84,11 @@ class HttpRequestParser {
             }
             return null;
         }
-
-        public String getMethod() {
-            return method;
-        }
-
-        public String getHttpVersion() {
-            return this.httpVersion;
-        }
-
-        public URI getUri() {
-            return this.uri;
-        }
     }
 
-    private static HttpHeader headerParser(BufferedReader bf) throws BadHttpRequestException, IOException {
-        bf.readLine(); // skip the first line
+    private HttpHeader headerParser(BufferedReader bf) throws BadHttpRequestException, IOException {
         String line;
-        HttpHeader headers = HttpHeaderFactory.create();
+        HttpHeader headers = new HttpHeaderFactory().getHeaders();
         while ((line = bf.readLine()) != null && !line.isEmpty()) {
             String[] headerLine = line.split(":", 2);
             if (headerLine.length == 2)
@@ -126,19 +96,28 @@ class HttpRequestParser {
             else
                 throw new BadHttpRequestException("Incorrect HTTP headers format");
         }
-        hasBody = line == null;
         return headers;
     }
 
-    private static Object bodyParser(BufferedReader bf) throws Exception {
-        String line;
-        StringBuilder bodyString = new StringBuilder();
-        if (hasBody) {
-            while ((line = bf.readLine()) != null && !line.isEmpty()) {
-                bodyString.append(line);
+    private String bodyParser(BufferedReader bf) throws Exception {
+        if (getHeaders().asMap().containsKey("Content-Length")) {
+            Optional<String> contentLengthHeader = getHeaders().get("Content-Length");
+            if (contentLengthHeader.isPresent() &&
+                    !contentLengthHeader.get().isEmpty() &&
+                    !contentLengthHeader.get().trim().equals(Integer.toString(0))
+            ) {
+                int contentLength = Integer.parseInt(contentLengthHeader.get());
+                char[] buffer = new char[contentLength];
+                int totalRead = 0;
+                while (totalRead < contentLength) {
+                    int read = bf.read(buffer, totalRead, contentLength - totalRead);
+                    if (read == -1) break;
+                    totalRead += read;
+                }
+                return new String(buffer);
             }
         }
-        return bodyString;
+        return "";
     }
 
     private static HttpQueryParam queryParamParser(URI uri) {
@@ -152,13 +131,13 @@ class HttpRequestParser {
                 queryList.forEach(query -> {
                     if (query.contains("=")) {
                         String[] parameter = query.split("=", 2);
-                        queryParams.set(
+                        queryParam.set(
                                 parameter[0],
                                 parameter[1]
                         );
                     } else {
                         if (!query.isEmpty()) {
-                            queryParams.set(query, "true");
+                            queryParam.set(query, "true");
                         }
                     }
                 });
@@ -167,7 +146,7 @@ class HttpRequestParser {
                     queryList.addAll(List.of(queryString.split("=", 2)));
                     String key = queryList.get(0);
                     if (!key.isBlank())
-                        queryParams.set(key, queryList.get(1));
+                        queryParam.set(key, queryList.get(1));
                 }
             }
         }

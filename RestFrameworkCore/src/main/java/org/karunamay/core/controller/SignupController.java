@@ -3,18 +3,16 @@ package org.karunamay.core.controller;
 import org.karunamay.core.Error.HttpError;
 import org.karunamay.core.api.authentication.AuthenticationService;
 import org.karunamay.core.api.controller.RestControllerConfig;
-import org.karunamay.core.api.dto.LoginRequestDTO;
-import org.karunamay.core.api.dto.UserLoginResponseDTO;
+import org.karunamay.core.api.dto.UserResponseDTO;
+import org.karunamay.core.api.dto.UserSignupDTO;
 import org.karunamay.core.api.http.ApplicationContext;
 import org.karunamay.core.api.http.HttpResponseWriter;
 import org.karunamay.core.api.http.HttpStatus;
-import org.karunamay.core.exception.InvalidCredentialsException;
 import org.karunamay.core.exception.NoPostBodyException;
 import org.karunamay.core.exception.ObjectNotFoundException;
 import org.karunamay.core.http.HttpErrorResponse;
 
-
-public class LoginController implements RestControllerConfig {
+public class SignupController implements RestControllerConfig {
 
     AuthenticationService authenticationService = new AuthenticationService();
 
@@ -22,17 +20,17 @@ public class LoginController implements RestControllerConfig {
     public void post(ApplicationContext context) {
         try {
             if (context.getHttpRequest().getBody().isEmpty()) {
-                throw new NoPostBodyException("Login credentials are missing. Email and Password are required.");
+                throw new NoPostBodyException("User details are missing. Please provide username, email and password");
             } else {
-                LoginRequestDTO body = context.getHttpRequest().parseBody(LoginRequestDTO.class);
-                UserLoginResponseDTO userLoginResponseDTO = authenticationService.login(body);
+                UserSignupDTO body = context.getHttpRequest().parseBody(UserSignupDTO.class);
+                UserResponseDTO userLoginResponseDTO = authenticationService.signup(body);
                 HttpResponseWriter.send(
                         new HttpErrorResponse<>(
-                                HttpStatus.HTTP_OK.getCode(),
-                                "User logged in successfully",
+                                HttpStatus.HTTP_CREATE.getCode(),
+                                "User created successfully",
                                 userLoginResponseDTO
                         ),
-                        HttpStatus.HTTP_OK,
+                        HttpStatus.HTTP_CREATE,
                         context
                 );
             }
@@ -40,8 +38,6 @@ public class LoginController implements RestControllerConfig {
             HttpError.badRequest400(context, e.getMessage());
         } catch (ObjectNotFoundException e) {
             HttpError.objectNotFound404(context, e.getMessage());
-        } catch (InvalidCredentialsException e) {
-            HttpError.unauthorizeAccess401(context, e.getMessage());
         }
     }
 }

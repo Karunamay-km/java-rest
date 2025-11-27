@@ -28,7 +28,6 @@ public class Jwt {
     @Setter
     private Map<String, ?> claims = new HashMap<>();
     @Getter
-//    private final LocalDateTime accessTokenExpiration = new Date(System.currentTimeMillis() + 3600);
     private final LocalDateTime accessTokenExpiration = LocalDateTime.now().plusSeconds(3600);
     @Getter
     private final LocalDateTime refreshTokenExpiration = LocalDateTime.now().plusSeconds(3600_000);

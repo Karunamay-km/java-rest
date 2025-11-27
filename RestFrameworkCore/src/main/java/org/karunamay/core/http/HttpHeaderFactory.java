@@ -9,12 +9,10 @@ import java.util.Optional;
 
 public class HttpHeaderFactory implements HttpHeader {
 
-    private static final Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers = new HashMap<>();
 
-    HttpHeaderFactory() {
-        headers.put("Connection", "keep-alive");
-        headers.put("Content-Type", "application/json");
-        headers.put("Server", "ubuntu 24");
+    public HttpHeaderFactory() {
+        setDefaultHeaders();
     }
 
     @Override
@@ -24,7 +22,7 @@ public class HttpHeaderFactory implements HttpHeader {
 
     @Override
     public Optional<String> get(String name) {
-        return Optional.ofNullable(headers.get(name.toLowerCase()));
+        return Optional.ofNullable(headers.get(name));
     }
 
     @Override
@@ -32,7 +30,17 @@ public class HttpHeaderFactory implements HttpHeader {
         return Collections.unmodifiableMap(headers);
     }
 
-    public static HttpHeader create() {
+    public HttpHeader create() {
         return new HttpHeaderFactory();
+    }
+
+    public HttpHeader getHeaders() {
+        return this;
+    }
+
+    private void setDefaultHeaders() {
+        headers.put("Connection", "keep-alive");
+        headers.put("Content-Type", "application/json");
+        headers.put("Server", "ubuntu 24");
     }
 }
